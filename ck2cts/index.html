@@ -2858,7 +2858,7 @@ var field = new Vue({
                   <input type="checkbox"
                   v-bind:id="'trait_'+Object.keys(bad_traits)[i]"
                   v-model="bad_traits[Object.keys(bad_traits)[i]]" /> 
-                  <img :src="Object.keys(bad_traits)[Object.keys(bad_traits)[i]]">
+                  <img :src="IMGMAP[Object.keys(bad_traits)[i]]">
                   {{Object.keys(bad_traits)[i]}}
                 </label>
               </td>
