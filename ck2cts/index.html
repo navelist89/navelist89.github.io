@@ -2745,7 +2745,7 @@ var field = new Vue({
       
 
 
-      for(var i=0 ;i<this.result_tactics.length; i++){
+      for(var i in this.result_tactics){
         tactic=this.result_tactics[i];
         tactic['prob'] = tactic.weight / totalweight;
       };
@@ -2758,7 +2758,7 @@ var field = new Vue({
 
 
 			if(this.result_tactics.length >1){
-          var tactic_footer = {'name':'expected value',
+          var tactic_footer = {'name':'EXPECTAION (Note: Not a tactic!)',
                               'weight':0,
                               'prob':0,
                               'strength':{
@@ -2769,12 +2769,15 @@ var field = new Vue({
           };
           
           
-        for(var i=0; i<this.result_tactics; i++){
+        for(var i in this.result_tactics){
           tactic = this.result_tactics[i];
           tactic_footer.strength.ATK += (tactic.strength.ATK * tactic.prob);
           tactic_footer.strength.DEF += (tactic.strength.DEF * tactic.prob);
           tactic_footer.strength.MRL += (tactic.strength.MRL * tactic.prob);
         };
+        for(var i in tactic_footer.strength){
+        	tactic_footer.strength[i]=Math.round(tactic_footer.strength[i]);
+        }
       
         this.result_tactics.push(tactic_footer);
                          
@@ -2787,7 +2790,7 @@ var field = new Vue({
       
       var tactic_header = this.result_tactics[0];
       
-      for(var i=0 ;i<this.result_tactics.length; i++){
+      for(var i in this.result_tactics){
         tactic = this.result_tactics[i];
         tactic['ratio']=new Object;
         tactic.ratio['ATK'] = i==0?0: Math.round((tactic.strength.ATK / tactic_header.strength.ATK)*100-100);
@@ -2864,18 +2867,18 @@ var field = new Vue({
           <table class='table'>
             <tr>
               <th style='width:10%'>Units</th>
-              <th v-for="unit in units"> <img :src="IMGMAP[unit.name]"> {{unit.name}}</th>
+              <th v-for="(unit, unitname) in units"> <img :src="IMGMAP[unitname]"> {{unitname}}</th>
             </tr>
             <tr>
               <th>Additionals</th>
-              <td v-for="unit in units">
-                <input type="number" value='0' v-model="add_units[unit.name]" min=0 style='width:50px'>
+              <td v-for="(unit, unitname) in units">
+                <input type="number" value='0' v-model="add_units[unitname]" min=0 style='width:50px'>
               </td>
             </tr>
             <tr>
               <th>Numbers</th>
-              <td v-for="unit in units">
-                {{num_units[unit.name]}}
+              <td v-for="(unit, unitname) in units">
+                {{num_units[unitname]}}
 
               </td>
             </tr>
