@@ -203,10 +203,13 @@ var RETINUES = [
 
 
 
-var UNITS = [
-	{
-		"name": "LI",
+var UNITS = {
+	"LI": {
+      
 		"morale": 2,
+        "additionals":0,
+      "amount":0,
+        
 		"maintenance": 0.7,
 		"attack": {
 			"Skirmish": 1,
@@ -219,9 +222,10 @@ var UNITS = [
 			"Pursue": 2.5
 		}
 	},
-	{
-		"name": "HI",
+	"HI": {
 		"morale": 4,
+      "additionals":0,
+      "amount":0,
 		"maintenance": 3,
 		"attack": {
 			"Skirmish": 0.25,
@@ -234,9 +238,10 @@ var UNITS = [
 			"Pursue": 4
 		}
 	},
-	{
-		"name": "PI",
+	"PI": {
 		"morale": 6,
+      "additionals":0,
+      "amount":0,
 		"maintenance": 2.5,
 		"attack": {
 			"Skirmish": 0.1,
@@ -249,9 +254,10 @@ var UNITS = [
 			"Pursue": 2
 		}
 	},
-	{
-		"name": "LC",
+	"LC": {
 		"morale": 4,
+      "additionals":0,
+      "amount":0,
 		"maintenance": 3,
 		"attack": {
 			"Skirmish": 2,
@@ -264,9 +270,10 @@ var UNITS = [
 			"Pursue": 4.5
 		}
 	},
-	{
-		"name": "HC",
+	"HC": {
 		"morale": 10,
+      "additionals":0,
+      "amount":0,
 		"maintenance": 6,
 		"attack": {
 			"Skirmish": 0.5,
@@ -279,9 +286,10 @@ var UNITS = [
 			"Pursue": 7.5
 		}
 	},
-	{
-		"name": "AR",
+	"AR": {
 		"morale": 1,
+      "additionals":0,
+      "amount":0,
 		"maintenance": 2,
 		"attack": {
 			"Skirmish": 2,
@@ -294,9 +302,10 @@ var UNITS = [
 			"Pursue": 2.25
 		}
 	},
-	{
-		"name": "HA",
+	"HA": {
 		"morale": 3,
+      "additionals":0,
+      "amount":0,
 		"maintenance": 4,
 		"attack": {
 			"Skirmish": 4,
@@ -309,9 +318,10 @@ var UNITS = [
 			"Pursue": 4.5
 		}
 	},
-	{
-		"name": "WE",
+	"WE": {
 		"morale": 15,
+      "additionals":0,
+      "amount":0,
 		"maintenance": 20,
 		"attack": {
 			"Skirmish": 0.25,
@@ -324,9 +334,10 @@ var UNITS = [
 			"Pursue": 2
 		}
 	},
-	{
-		"name": "CC",
+	"CC": {
 		"morale": 5,
+      "additionals":0,
+      "amount":0,
 		"maintenance": 3,
 		"attack": {
 			"Skirmish": 4,
@@ -339,9 +350,7 @@ var UNITS = [
 			"Pursue": 2.5
 		}
 	}
-];
-
-
+};
 
 
 var TACTICS = [
@@ -1065,6 +1074,14 @@ var TACTICS = [
 			]
 		]
 	},
+    {
+    "name":"Melee",
+    "duration":1,
+    "type":"Melee",
+    "phase":"Melee",
+    "eligibility":true,
+    "weight":0
+  },
 	{
 		"name": "Wait",
 		"duration": 1,
@@ -2565,16 +2582,11 @@ var field = new Vue({
   },
   
   methods:{
-  	getUnitFromName:function(name){
-    	for(unit in this.units){
-      	if(this.units[unit].name==name)
-        	return unit;
-      }
-    },
+
   	changeUnitAmount:function(){
-    	for(var i in this.units){
-      	var unit = this.units[i];
-      	this.num_units[unit.name]=Number(this.add_units[unit.name]);
+    	for(var unitname in this.units){
+      	//var unit = this.units[unitname];
+      	this.num_units[unitname]=Number(this.add_units[unitname]);
       }
       
       
@@ -2598,10 +2610,11 @@ var field = new Vue({
       this.changeUnitAmount();
       
       
+      
       //Units
-      for(var i in this.units){
-        var unit = this.units[i];
-        eval("var "+unit.name+" = Number("+this.num_units[unit.name] + ");");
+      for(var unitname in this.units){
+        //var unit = this.units[unitname];
+        eval("var "+unitname+" = Number("+this.num_units[unitname] + ");");
       }
 
       //Days(for charging tactics only) and phase
@@ -2683,22 +2696,108 @@ var field = new Vue({
           totalweight += weight;
           
 
+					var strength = new Object;
+          strength['ATK']=0;
+          strength['DEF']=0;
+          strength['MRL']=0;
+          
+          for(var unitname in this.units){
+          	unit = this.units[unitname];
+          	strength['ATK'] += Number(unit.attack[phase]) * Number(this.num_units[unitname]);
+            strength['DEF'] += Number(unit.defense[phase]) * Number(this.num_units[unitname]);
+            
+            strength['MRL'] += Number(unit.morale) * Number(this.num_units[unitname]);
+            
+            
+            for (var k in tactic.effect){
+            	effect = tactic.effect[k];
+              if(effect[0]==unitname){
+              	if(effect[1]=='ATK'){
+                	strength['ATK'] += Number(unit.attack[phase]) * Number(this.num_units[unitname]) * 
+                  		Number(effect[2])/100;
+                }else if (effect[1]=='DEF'){
+                	strength['DEF'] += Number(unit.defense[phase]) * Number(this.num_units[unitname]) * 
+                  		Number(effect[2])/100;
+                }else if (effect[2] == 'MRL'){
+                	strength['MRL'] += Number(unit.morale) * Number(this.num_units[unitname]) * 
+                  		Number(effect[2])/100;
+                }
+              }
+            }
+            
+          
+          }
           
           this.result_tactics.push({"name":tactic.name,
-                                    "weight":weight
+                                    "weight":weight,
+                                    "strength":strength
                                    });
           
         }
-        //this.msg += counter; 
+        
+        
         
       counter++; 
       }
       
-      //console.log(this);
+      
+      //PostProcessing
+      
+
+
       for(var i=0 ;i<this.result_tactics.length; i++){
         tactic=this.result_tactics[i];
         tactic['prob'] = tactic.weight / totalweight;
+      };
+      
+      
+
+
+
+
+
+
+			if(this.result_tactics.length >1){
+          var tactic_footer = {'name':'expected value',
+                              'weight':0,
+                              'prob':0,
+                              'strength':{
+                                'ATK':0,
+                                'DEF':0,
+                                'MRL':0
+                              }
+          };
+          
+          
+        for(var i=0; i<this.result_tactics; i++){
+          tactic = this.result_tactics[i];
+          tactic_footer.strength.ATK += (tactic.strength.ATK * tactic.prob);
+          tactic_footer.strength.DEF += (tactic.strength.DEF * tactic.prob);
+          tactic_footer.strength.MRL += (tactic.strength.MRL * tactic.prob);
+        };
+      
+        this.result_tactics.push(tactic_footer);
+                         
+      }   
+      
+      
+
+      
+      
+      
+      var tactic_header = this.result_tactics[0];
+      
+      for(var i=0 ;i<this.result_tactics.length; i++){
+        tactic = this.result_tactics[i];
+        tactic['ratio']=new Object;
+        tactic.ratio['ATK'] = i==0?0: Math.round((tactic.strength.ATK / tactic_header.strength.ATK)*100-100);
+        tactic.ratio['DEF'] = i==0?0: Math.round((tactic.strength.DEF / tactic_header.strength.DEF)*100-100);
+        tactic.ratio['MRL'] = i==0?0: Math.round((tactic.strength.MRL / tactic_header.strength.MRL)*100-100);
       }
+
+
+
+
 
       
       if(this.result_tactics.length === 0)
@@ -2753,8 +2852,8 @@ var field = new Vue({
             <tr>
               <th>Amount</th>
               <td v-for="retinue in retinues" style='width:10%'>
-                <input type="number" value='0' v-model="num_retinues[retinue.name]" min=0 style='width:70px' @change=onChange>
-                
+                <input type="number" value='0' v-model="num_retinues[retinue.name]" min=0 style='width:70px'>
+
               </td>
             </tr>
             <!--tr><td v-for="retinue in retinues">{{retinue.amount}}</td></tr-->
@@ -2777,7 +2876,7 @@ var field = new Vue({
               <th>Numbers</th>
               <td v-for="unit in units">
                 {{num_units[unit.name]}}
-                
+
               </td>
             </tr>
           </table>
@@ -2888,13 +2987,21 @@ var field = new Vue({
               <tr>
                 <th scope='col'>Tactic Name</th>
                 <th scope='col'>Probability(%)</th>
+                <th scope='col'>Attack</th>
+                <th scope='col'>Defence</th>
+                <th scope='col'>Morale</th>
               </tr>
             </thead>
             <tbody>
               <tr v-for="tactic in result_tactics">
                 <th scope='col'>{{tactic.name}}</th>
                 <td>{{(tactic.prob*100).toFixed(2)+"%"}}</td>
+                <!--td>{{tactic}}</td-->
+                <td>{{tactic.strength['ATK']}} ({{tactic.ratio['ATK']}}%)</td>
+                <td>{{tactic.strength['DEF']}} ({{tactic.ratio['DEF']}}%)</td>
+                <td>{{tactic.strength['MRL']}} ({{tactic.ratio['MRL']}}%)</td>
               </tr>
+
             </tbody>
           </table>
         </div>
@@ -2903,14 +3010,6 @@ var field = new Vue({
       <div class='row' style='height:100px' />
 
     </div>
-
-
-    
-    
-    <!--script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script-->
-
 
 
 
