@@ -2620,7 +2620,7 @@ var field = new Vue({
     },
     
     divide:function(a,b){
-    
+    	return b==0?0:a/b;
     },
 
   	changeUnitAmount:function(){
@@ -3087,10 +3087,10 @@ var field = new Vue({
                   <!--td>{{tactic}}</td-->
                   <td>{{tactic.strength['ATK']}}</td>
                   <td>{{tactic.ratio['ATK']}}%</td>
-                  <td>{{(tactic.strength['ATK']/cost_all).toFixed(2)}}</td>
+                  <td>{{divide(tactic.strength['ATK'],cost_all).toFixed(2)}}</td>
                   <td>{{tactic.strength['DEF']}}</td>
                   <td>{{tactic.ratio['DEF']}}%</td>
-                  <td>{{(tactic.strength['DEF']/cost_all).toFixed(2)}}</td>
+                  <td>{{divide(tactic.strength['DEF'],cost_all).toFixed(2)}}</td>
                 </tr>
 
               </tbody>
