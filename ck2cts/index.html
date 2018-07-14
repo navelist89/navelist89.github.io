@@ -2463,6 +2463,17 @@ var ADD_UNITS = {
 	"CC": 0
 };
 
+var CUSTOM_RETINUE = {
+	"LI": 0,
+	"HI": 0,
+	"PI": 0,
+	"LC": 0,
+	"HC": 0,
+	"AR": 0,
+	"HA": 0,
+	"WE": 0,
+	"CC": 0
+};
 
 var NUM_RETINUES = {
 	"Shock":0,
@@ -2487,6 +2498,12 @@ var field = new Vue({
     
     num_units : NUM_UNITS,
     add_units : ADD_UNITS,
+    custom_retinue : CUSTOM_RETINUE,
+    custom_retinue_amount:0,
+    
+    cost_retinue:0,
+    cost_all:0,
+    
     num_retinues : NUM_RETINUES,
     cgroups:CGROUPS,
     cultures:CULTURES,
@@ -2515,6 +2532,10 @@ var field = new Vue({
         Object.keys(this.life_traits).length,
         Object.keys(this.combat_traits).length
       );
+    },
+    
+    getUnitKey:function(index){
+    	return Object.keys(this.custom_retinue)[index];
     }
   },
   watch:{
@@ -2558,6 +2579,17 @@ var field = new Vue({
       
     },
     
+    custom_retinue:{
+    	handler(val){
+        this.onChange();
+      },
+      deep:true
+    },
+    custom_retinue_amount:{
+    	handler(val){
+        this.onChange();
+      }
+    },
     
     
     
@@ -2582,11 +2614,27 @@ var field = new Vue({
   },
   
   methods:{
+  
+  	getUnitKey:function(index){
+    	return Object.keys(this.custom_retinue)[index];
+    },
 
   	changeUnitAmount:function(){
+    	this.cost_retinue = 0;
+      this.cost_all = 0;
+      
     	for(var unitname in this.units){
       	//var unit = this.units[unitname];
-      	this.num_units[unitname]=Number(this.add_units[unitname]);
+        numunit = Number(this.add_units[unitname]);
+      	this.num_units[unitname]=numunit;
+        this.cost_all += numunit*this.units[unitname]['maintenance'];
+      }
+      
+      for(var unitname in this.custom_retinue){
+      	numunit = Number(this.custom_retinue[unitname])*this.custom_retinue_amount;
+      	this.num_units[unitname]+=numunit;
+        this.cost_retinue += numunit*this.units[unitname]['maintenance'];
+        this.cost_all += numunit*this.units[unitname]['maintenance'];
       }
       
       
@@ -2599,8 +2647,11 @@ var field = new Vue({
             for(var unitname in retinue.composition){
 
               var unitamount = retinue.composition[unitname];
-
-              this.num_units[unitname] += Number(retsize) * Number(unitamount);
+              numunit = Number(retsize) * Number(unitamount);
+              this.num_units[unitname] += numunit;
+              
+              this.cost_retinue += numunit*this.units[unitname]['maintenance'];
+        			this.cost_all += numunit*this.units[unitname]['maintenance'];
 
             }
           }
@@ -2835,194 +2886,222 @@ var field = new Vue({
         <h3 class='pull-right'>by navelist</h3>
 
       </div>
-      <div id="retinue" class='row'>
-        <div>
-          <h3>Retinue</h3>
-          <table class='table w-100'>
+      <div>
 
-            <tr>
-              <th style='width:10%'>Name</th>
-              <th v-for="retinue in retinues">{{retinue.name}}</th>
-            </tr>
-            <tr>
-              <th>Units</th>
-              <td v-for="retinue in retinues">
-                <div v-for="(amount, unit) in retinue.composition">
-                  <img :src="IMGMAP[unit]"> {{unit}} {{amount}}
-                </div>
-              </td>
-            </tr>
-            <tr>
-              <th>Amount</th>
-              <td v-for="retinue in retinues" style='width:10%'>
-                <input type="number" value='0' v-model="num_retinues[retinue.name]" min=0 style='width:70px'>
 
-              </td>
-            </tr>
-            <!--tr><td v-for="retinue in retinues">{{retinue.amount}}</td></tr-->
-          </table>
-        </div>
-        <div>
-          <h3>Troops</h3>
-          <table class='table'>
-            <tr>
-              <th style='width:10%'>Units</th>
-              <th v-for="(unit, unitname) in units"> <img :src="IMGMAP[unitname]"> {{unitname}}</th>
-            </tr>
-            <tr>
-              <th>Additionals</th>
-              <td v-for="(unit, unitname) in units">
-                <input type="number" value='0' v-model="add_units[unitname]" min=0 style='width:50px'>
-              </td>
-            </tr>
-            <tr>
-              <th>Numbers</th>
-              <td v-for="(unit, unitname) in units">
-                {{num_units[unitname]}}
+        <div id="retinue" class='row container'>
 
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div>
-          <h3>Battle Phase Info</h3>
-          <table>
-            <tr>
-              <td v-for="ph in phases" style='width:150px'>
-                <label>
+          <div class='row'>
+
+
+            <div class='column col-lg-8'>
+              <h3>Retinue</h3>
+              <table class='table w-100'>
+
+                <tr>
+                  <th style='width:10%'>Name</th>
+                  <th v-for="retinue in retinues">{{retinue.name}}</th>
+                </tr>
+                <tr>
+                  <th>Units</th>
+                  <td v-for="retinue in retinues">
+                    <div v-for="(amount, unit) in retinue.composition">
+                      <img :src="IMGMAP[unit]"> {{unit}} {{amount}}
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Amount</th>
+                  <td v-for="retinue in retinues" style='width:10%'>
+                    <input type="number" value='0' v-model="num_retinues[retinue.name]" min=0 style='width:70px'>
+
+                  </td>
+                </tr>
+                <!--tr><td v-for="retinue in retinues">{{retinue.amount}}</td></tr-->
+              </table>
+            </div>
+
+            <div class='column col-lg-4'>
+              <h3> Custom Retinue </h3>
+              <table class='table'>
+                <tr v-for="_i in [0,1,2]">
+                  <td v-for="i in [_i*3 + 0,_i*3 + 1,_i*3 +2]"> <img :src="IMGMAP[getUnitKey(i)]"> {{getUnitKey(i)}} 
+                  <input type="number" value='0' v-model="custom_retinue[getUnitKey(i)]" min=0 style='width:50px'></td>
+                </tr>
+                <tr><td>Amount</td> <td colspan='2'> <input type="number" value='0' v-model="custom_retinue_amount" min=0 style='width:100px'> </td> </tr>
+              </table>
+
+            </div>
+
+          </div>
+
+
+
+
+          <div class='row'>
+            <h3>Troops</h3>
+            <table class='table'>
+              <tr>
+                <th style='width:10%'>Units</th>
+                <th v-for="(unit, unitname) in units"> <img :src="IMGMAP[unitname]"> {{unitname}}</th>
+              </tr>
+              <tr>
+                <th>Additionals</th>
+                <td v-for="(unit, unitname) in units">
+                  <input type="number" value='0' v-model="add_units[unitname]" min=0 style='width:50px'>
+                </td>
+              </tr>
+              <tr>
+                <th>Numbers</th>
+                <td v-for="(unit, unitname) in units">
+                  {{num_units[unitname]}}
+
+                </td>
+              </tr>
+            </table>
+          </div>
+          
+          <h4> Retinue Cost : {{cost_retinue}}</h4>
+          <h4> Total Cost : {{cost_all}}</h4>
+          <div>
+            <h3>Battle Phase Info</h3>
+            <table>
+              <tr>
+                <td v-for="ph in phases" style='width:150px'>
+                  <label>
                   <input type="radio" name="phase" v-bind:id="ph" v-bind:value="ph" v-model="phase"/> <img :src="IMGMAP[ph]"/> {{ph}}
                 </label>
-              </td>
-            </tr>
-            <tr v-if="phase=='Skirmish'">
-              <td v-for='d in DAYS'>
-                <label>
+                </td>
+              </tr>
+              <tr v-if="phase=='Skirmish'">
+                <td v-for='d in DAYS'>
+                  <label>
                   <input type="radio" name="days" v-bind:id="d+'days'" v-bind:value="d" v-model="days" /> {{d}} days
                 </label>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div>
-          <h3>General</h3>
-          Martial : <input type="number" v-model="general.martial" min=0>
-          <div>
-            <h4>Culture</h4>
+                </td>
+              </tr>
+            </table>
           </div>
-          <table class='container'>
-            <tr class='row'>
-              <td v-for="cgroup in cgroups" class='col'>
-                <label>
+          <div>
+            <h3>General</h3>
+            Martial : <input type="number" v-model="general.martial" min=0>
+            <div>
+              <h4>Culture</h4>
+            </div>
+            <table class='container'>
+              <tr class='row'>
+                <td v-for="cgroup in cgroups" class='col'>
+                  <label>
                   <input type="radio" name="cultures" v-bind:id="cgroup" v-bind:value="cgroup" v-model="general.culture_input"  /> {{cgroup}}
                 </label>
-              </td>
-            </tr>
-            <tr class='row'>
-              <td v-for="culture in cultures" class='col'>
-                <label>
+                </td>
+              </tr>
+              <tr class='row'>
+                <td v-for="culture in cultures" class='col'>
+                  <label>
                   <input type="radio" name="cultures" v-bind:id="culture" v-bind:value="culture" v-model="general.culture_input" /> {{culture}}
                 </label>
-              </td>
-            </tr>
-          </table>
+                </td>
+              </tr>
+            </table>
 
 
 
-          <div>
-            <h4>Traits</h4>
-          </div>
+            <div>
+              <h4>Traits</h4>
+            </div>
 
 
-          <table class='container'>
-            <tr v-for="(n, i) in maxGeneralTraits" class='row'>
-              <td v-if="Object.keys(combat_traits).length>i" class='col'>
-                <label>
+            <table class='container'>
+              <tr v-for="(n, i) in maxGeneralTraits" class='row'>
+                <td v-if="Object.keys(combat_traits).length>i" class='col'>
+                  <label>
                   <input type="checkbox" v-bind:id="'trait_'+Object.keys(combat_traits)[i]" v-model="combat_traits[Object.keys(combat_traits)[i]]"/> 
                   <img :src="IMGMAP[Object.keys(combat_traits)[i]]">
                   {{Object.keys(combat_traits)[i]}}
                 </label>
-              </td>
-              <td v-else/>
+                </td>
+                <td v-else/>
 
-              <td v-if="Object.keys(life_traits).length>i" class='col'>
-                <label>
+                <td v-if="Object.keys(life_traits).length>i" class='col'>
+                  <label>
                   <input type="checkbox" 
                   v-bind:id="'trait_'+Object.keys(life_traits)[i]"
                   v-model="life_traits[Object.keys(life_traits)[i]]" /> 
                   <img :src="IMGMAP[Object.keys(life_traits)[i]]">
                   {{Object.keys(life_traits)[i]}}
                 </label>
-              </td>
-              <td v-else/>
+                </td>
+                <td v-else/>
 
-              <td v-if="Object.keys(bad_traits).length>i" class='col'>
-                <label>
+                <td v-if="Object.keys(bad_traits).length>i" class='col'>
+                  <label>
                   <input type="checkbox"
                   v-bind:id="'trait_'+Object.keys(bad_traits)[i]"
                   v-model="bad_traits[Object.keys(bad_traits)[i]]" /> 
                   <img :src="IMGMAP[Object.keys(bad_traits)[i]]">
                   {{Object.keys(bad_traits)[i]}}
                 </label>
-              </td>
-              <td v-else/>
+                </td>
+                <td v-else/>
 
 
-            </tr>
-          </table>
-        </div>
-        <div class>
-          <h3>Terrain</h3>
-          <table class='container'>
-            <tr class='row'>
-              <td v-for="(flag, terr) in terrain" class='col'>
-                <label>
+              </tr>
+            </table>
+          </div>
+          <div class>
+            <h3>Terrain</h3>
+            <table class='container'>
+              <tr class='row'>
+                <td v-for="(flag, terr) in terrain" class='col'>
+                  <label>
                 <input type="checkbox" v-bind:id="'flag_terrain_'+terr" v-model="terrain[terr]" />
                 {{terr}}
                 </label>
-              </td>
-            </tr>
-          </table>
-        </div>
-        <div>
-          <h3>Results</h3>
-          <table class='table table-striped'>
-            <thead class="thead-dark">
-              <tr>
-                <th scope='col'>Tactic Name</th>
-                <th scope='col'>Probability(%)</th>
-                <th scope='col'>Attack</th>
-                <th scope='col'>Defence</th>
-                <th scope='col'>Morale</th>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              <tr v-for="tactic in result_tactics">
-                <th scope='col'>{{tactic.name}}</th>
-                <td>{{(tactic.prob*100).toFixed(2)+"%"}}</td>
-                <!--td>{{tactic}}</td-->
-                <td>{{tactic.strength['ATK']}} ({{tactic.ratio['ATK']}}%)</td>
-                <td>{{tactic.strength['DEF']}} ({{tactic.ratio['DEF']}}%)</td>
-                <td>{{tactic.strength['MRL']}} ({{tactic.ratio['MRL']}}%)</td>
-              </tr>
+            </table>
+          </div>
+          <div>
+            <h3>Results</h3>
+            <table class='table table-striped'>
+              <thead class="thead-dark">
+                <tr>
+                  <th scope='col'>Tactic Name</th>
+                  <th scope='col'>Probability(%)</th>
+                  <th scope='col'>Attack</th>
+                  <th scope='col'>Defence</th>
+                  <th scope='col'>Morale</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="tactic in result_tactics">
+                  <th scope='col'>{{tactic.name}}</th>
+                  <td>{{(tactic.prob*100).toFixed(2)+"%"}}</td>
+                  <!--td>{{tactic}}</td-->
+                  <td>{{tactic.strength['ATK']}} ({{tactic.ratio['ATK']}}%)</td>
+                  <td>{{tactic.strength['DEF']}} ({{tactic.ratio['DEF']}}%)</td>
+                  <td>{{tactic.strength['MRL']}} ({{tactic.ratio['MRL']}}%)</td>
+                </tr>
 
-            </tbody>
-          </table>
+              </tbody>
+            </table>
+          </div>
         </div>
+
+        <div class='row' style='height:100px' />
+
       </div>
 
-      <div class='row' style='height:100px' />
-
-    </div>
 
 
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
-
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-    <script src="https://unpkg.com/vue/dist/vue.js"></script>
+      <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+      <script src="https://unpkg.com/vue/dist/vue.js"></script>
   </body>
 
 </html>
