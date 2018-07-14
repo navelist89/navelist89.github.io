@@ -2618,6 +2618,10 @@ var field = new Vue({
   	getUnitKey:function(index){
     	return Object.keys(this.custom_retinue)[index];
     },
+    
+    divide:function(a,b){
+    
+    },
 
   	changeUnitAmount:function(){
     	this.cost_retinue = 0;
@@ -2925,10 +2929,13 @@ var field = new Vue({
               <h3> Custom Retinue </h3>
               <table class='table'>
                 <tr v-for="_i in [0,1,2]">
-                  <td v-for="i in [_i*3 + 0,_i*3 + 1,_i*3 +2]"> <img :src="IMGMAP[getUnitKey(i)]"> {{getUnitKey(i)}} 
-                  <input type="number" value='0' v-model="custom_retinue[getUnitKey(i)]" min=0 style='width:50px'></td>
+                  <td v-for="i in [_i*3 + 0,_i*3 + 1,_i*3 +2]"> <img :src="IMGMAP[getUnitKey(i)]"> {{getUnitKey(i)}}
+                    <input type="number" value='0' v-model="custom_retinue[getUnitKey(i)]" min=0 style='width:50px'></td>
                 </tr>
-                <tr><td>Amount</td> <td colspan='2'> <input type="number" value='0' v-model="custom_retinue_amount" min=0 style='width:100px'> </td> </tr>
+                <tr>
+                  <td>Amount</td>
+                  <td colspan='2'> <input type="number" value='0' v-model="custom_retinue_amount" min=0 style='width:100px'> </td>
+                </tr>
               </table>
 
             </div>
@@ -2960,7 +2967,7 @@ var field = new Vue({
               </tr>
             </table>
           </div>
-          
+
           <h4> Retinue Cost : {{cost_retinue}}</h4>
           <h4> Total Cost : {{cost_all}}</h4>
           <div>
@@ -3069,9 +3076,8 @@ var field = new Vue({
                 <tr>
                   <th scope='col'>Tactic Name</th>
                   <th scope='col'>Probability(%)</th>
-                  <th scope='col'>Attack</th>
-                  <th scope='col'>Defence</th>
-                  <th scope='col'>Morale</th>
+                  <th scope='col' colspan='3'>Attack (stat / ratio / eff)</th>
+                  <th scope='col' colspan='3'>Defence (stat / ratio / eff)</th>
                 </tr>
               </thead>
               <tbody>
@@ -3079,9 +3085,12 @@ var field = new Vue({
                   <th scope='col'>{{tactic.name}}</th>
                   <td>{{(tactic.prob*100).toFixed(2)+"%"}}</td>
                   <!--td>{{tactic}}</td-->
-                  <td>{{tactic.strength['ATK']}} ({{tactic.ratio['ATK']}}%)</td>
-                  <td>{{tactic.strength['DEF']}} ({{tactic.ratio['DEF']}}%)</td>
-                  <td>{{tactic.strength['MRL']}} ({{tactic.ratio['MRL']}}%)</td>
+                  <td>{{tactic.strength['ATK']}}</td>
+                  <td>{{tactic.ratio['ATK']}}%</td>
+                  <td>{{(tactic.strength['ATK']/cost_all).toFixed(2)}}</td>
+                  <td>{{tactic.strength['DEF']}}</td>
+                  <td>{{tactic.ratio['DEF']}}%</td>
+                  <td>{{(tactic.strength['DEF']/cost_all).toFixed(2)}}</td>
                 </tr>
 
               </tbody>
