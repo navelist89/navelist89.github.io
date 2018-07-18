@@ -1,4 +1,7 @@
+<!--
+2018.07.18 Hordes added. 
 
+-->
 <!DOCTYPE html>
 <html>
 <head>
@@ -55,7 +58,64 @@ del {
 
     window.onload=function(){
       
-
+ var HORDES = [{
+     "name": "Light Rider",
+     "composition": {
+         "LC": 250
+     }
+ }, {
+     "name": "Maurauder",
+     "composition": {
+         "LC": 225,
+         "HA": 25
+     }
+ }, {
+     "name": "Skirmish Cavalry",
+     "composition": {
+         "LC": 200,
+         "HA": 50
+     }
+ }, {
+     "name": "Light Horse Archer",
+     "composition": {
+         "LC": 150,
+         "HA": 100
+     }
+ }, {
+     "name": "Light Vanguard",
+     "composition": {
+         "LC": 200,
+         "HC": 50
+     }
+ }, {
+     "name": "Heavy Vanguard",
+     "composition": {
+         "LC": 100,
+         "HC": 150
+     }
+ }, {
+     "name": "Horse Archer",
+     "composition": {
+         "HA": 250
+     }
+ }, {
+     "name": "Lancer",
+     "composition": {
+         "HC": 250
+     }
+ }, {
+     "name": "Camel Cavalry",
+     "composition": {
+         "LC": 100,
+         "CC": 150
+     }
+ }, {
+     "name": "Elephant Cavalry",
+     "composition": {
+         "LC": 200
+     }
+ }];
+ 
 var RETINUES = [
 	{
 		"name": "Shock",
@@ -422,7 +482,7 @@ var TACTICS = [
 		"duration": 18,
 		"type": "Harass",
 		"phase": "Skirmish",
-		"eligibility": "HA < 0.5*ALL &&((LCA >= 0.4*ALL && general.martial<12)  || LCA >= 0.75*ALL)",
+		"eligibility": "HA < 0.5*ALL && ((LC >= 0.4*ALL && general.martial<12)  || LC >= 0.75*ALL)",
 		"weight": 2,
 		"modifiers": [
 			[
@@ -477,7 +537,7 @@ var TACTICS = [
 		"duration": 18,
 		"type": "Harass",
 		"phase": "Skirmish",
-		"eligibility": "LCA >= 0.01*ALL && AR>= 0.01*ALL && AR < 0.3*ALL &&LI >= 0.1*ALL",
+		"eligibility": "LC >= 0.01*ALL && AR>= 0.01*ALL && AR < 0.3*ALL &&LI >= 0.1*ALL",
 		"weight": 4,
 		"modifiers": [
 			[
@@ -2481,13 +2541,27 @@ var NUM_RETINUES = {
 	"Cavalry":0,
 	"Skirmish":0,
 	"Light Skirmish":0
-}
+};
+
+var NUM_HORDES = {
+	"Light Rider":0,
+	"Maurauder":0,
+	"Skirmish Cavalry":0,
+	"Light Horse Archer":0,
+	"Light Vanguard":0,
+	"Heavy Vanguard":0,
+	"Horse Archer":0,
+	"Lancer":0,
+	"Camel Cavalry":0,
+	"Elephant Cavalry":0
+};
 
 var field = new Vue({
   el: '#retinue', 
   data: {
     msg:"",
     retinues: RETINUES,
+    hordes: HORDES,
     units: UNITS,
     tactics: TACTICS,
     terrain:TERRAINS,
@@ -2495,6 +2569,7 @@ var field = new Vue({
     life_traits:LIFETRAITS,
     combat_traits:COMBATTRAITS,
     result_tactics:[EMPTY_TACTIC],
+    
     
     num_units : NUM_UNITS,
     add_units : ADD_UNITS,
@@ -2505,6 +2580,7 @@ var field = new Vue({
     cost_all:0,
     
     num_retinues : NUM_RETINUES,
+    num_hordes : NUM_HORDES,
     cgroups:CGROUPS,
     cultures:CULTURES,
     phases:PHASES,
@@ -2566,6 +2642,12 @@ var field = new Vue({
       },
       deep:true
       
+    },
+    num_hordes:{
+    	handler(val){
+      	this.onChange();
+      },
+      deep:true
     },
     
     add_units:{
@@ -2659,6 +2741,22 @@ var field = new Vue({
 
             }
           }
+        }
+        
+        for(var i=0; i<this.hordes.length; i++){
+        	var horde = this.hordes[i];
+          var hordesize = this.num_hordes[horde.name];
+          
+          if(hordesize>0){
+          	for(var unitname in horde.composition){
+            	var unitamount = horde.composition[unitname];
+              numunit = Number(hordesize)*Number(unitamount);
+              this.num_units[unitname] += numunit;
+              
+              
+            }
+          }
+          
         }
     },
     onChange:function(){
@@ -2939,11 +3037,41 @@ var field = new Vue({
               </table>
 
             </div>
+            
+            
 
           </div>
 
+          <h4> Retinue Cost : {{cost_retinue}}</h4>
 
 
+          <div class='row'>
+            <h3>Hordes</h3>
+            <table class='table'>
+                <tr>
+                  <th style='width:10%'>Name</th>
+                  <th v-for="horde in hordes">{{horde.name}}</th>
+                </tr>
+                <tr>
+                  <th>Units</th>
+                  <td v-for="horde in hordes">
+                    <div v-for="(amount, unit) in horde.composition">
+                      <img :src="IMGMAP[unit]"> {{unit}} {{amount}}
+                    </div>
+                  </td>
+                </tr>
+                <tr>
+                  <th>Amount</th>
+                  <td v-for="horde in hordes" style='width:10%'>
+                    <input type="number" value='0' v-model="num_hordes[horde.name]" min=0 style='width:70px'>
+
+                  </td>
+                </tr>
+
+
+
+            </table>
+          </div>
 
           <div class='row'>
             <h3>Troops</h3>
@@ -2968,8 +3096,7 @@ var field = new Vue({
             </table>
           </div>
 
-          <h4> Retinue Cost : {{cost_retinue}}</h4>
-          <h4> Total Cost : {{cost_all}}</h4>
+          
           <div>
             <h3>Battle Phase Info</h3>
             <table>
