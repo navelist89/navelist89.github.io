@@ -4,6 +4,7 @@
 -->
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <title>ck2cts</title>
@@ -12,2968 +13,2977 @@
   <meta name="googlebot" content="noindex, nofollow">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<script src="https://unpkg.com/vue@3"></script>
+  <script src="https://unpkg.com/vue@2"></script>
 
-  <script
-    type="text/javascript"
-    src="/js/lib/dummy.js"
-    
-  ></script>
-    <link rel="stylesheet" type="text/css" href="/css/normalize.css">
+  <script type="text/javascript" src="/js/lib/dummy.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/normalize.css">
 
-    <link rel="stylesheet" type="text/css" href="/css/result-light.css">
+  <link rel="stylesheet" type="text/css" href="/css/result-light.css">
 
   <style type="text/css">
     body {
-  background: #20262E;
-  padding: 20px;
-  font-family: Helvetica;
-}
+      background: #20262E;
+      padding: 20px;
+      font-family: Helvetica;
+    }
 
-#app {
-  background: #fff;
-  border-radius: 4px;
-  padding: 20px;
-  transition: all 0.2s;
-}
+    #app {
+      background: #fff;
+      border-radius: 4px;
+      padding: 20px;
+      transition: all 0.2s;
+    }
 
-li {
-  margin: 8px 0;
-}
+    li {
+      margin: 8px 0;
+    }
 
-h2 {
-  font-weight: bold;
-  margin-bottom: 15px;
-}
+    h2 {
+      font-weight: bold;
+      margin-bottom: 15px;
+    }
 
-del {
-  color: rgba(0, 0, 0, 0.3);
-}
-
+    del {
+      color: rgba(0, 0, 0, 0.3);
+    }
   </style>
   <!-- TODO: Missing CoffeeScript 2 -->
 
   <script type="text/javascript">
+    window.onload = function () {
 
+      var HORDES = [{
+        "name": "Light Rider",
+        "composition": {
+          "LC": 250
+        }
+      }, {
+        "name": "Maurauder",
+        "composition": {
+          "LC": 225,
+          "HA": 25
+        }
+      }, {
+        "name": "Skirmish Cavalry",
+        "composition": {
+          "LC": 200,
+          "HA": 50
+        }
+      }, {
+        "name": "Light Horse Archer",
+        "composition": {
+          "LC": 150,
+          "HA": 100
+        }
+      }, {
+        "name": "Light Vanguard",
+        "composition": {
+          "LC": 200,
+          "HC": 50
+        }
+      }, {
+        "name": "Heavy Vanguard",
+        "composition": {
+          "LC": 100,
+          "HC": 150
+        }
+      }, {
+        "name": "Horse Archer",
+        "composition": {
+          "HA": 250
+        }
+      }, {
+        "name": "Lancer",
+        "composition": {
+          "HC": 250
+        }
+      }, {
+        "name": "Camel Cavalry",
+        "composition": {
+          "LC": 100,
+          "CC": 150
+        }
+      }, {
+        "name": "Elephant Cavalry",
+        "composition": {
+          "LC": 200,
+          "WE": 50
+        }
+      }];
 
-    window.onload=function(){
-      
- var HORDES = [{
-     "name": "Light Rider",
-     "composition": {
-         "LC": 250
-     }
- }, {
-     "name": "Maurauder",
-     "composition": {
-         "LC": 225,
-         "HA": 25
-     }
- }, {
-     "name": "Skirmish Cavalry",
-     "composition": {
-         "LC": 200,
-         "HA": 50
-     }
- }, {
-     "name": "Light Horse Archer",
-     "composition": {
-         "LC": 150,
-         "HA": 100
-     }
- }, {
-     "name": "Light Vanguard",
-     "composition": {
-         "LC": 200,
-         "HC": 50
-     }
- }, {
-     "name": "Heavy Vanguard",
-     "composition": {
-         "LC": 100,
-         "HC": 150
-     }
- }, {
-     "name": "Horse Archer",
-     "composition": {
-         "HA": 250
-     }
- }, {
-     "name": "Lancer",
-     "composition": {
-         "HC": 250
-     }
- }, {
-     "name": "Camel Cavalry",
-     "composition": {
-         "LC": 100,
-         "CC": 150
-     }
- }, {
-     "name": "Elephant Cavalry",
-     "composition": {
-         "LC": 200,
-	 "WE": 50
-     }
- }];
- 
-var RETINUES = [
-	{
-		"name": "Shock",
-		"composition": {
-			"HI": 200,
-			"AR": 50
-		},
-		"cap": 700,
-		"cost": 98,
-		"reinforcecost": 2.1,
-		"upkeep": 0.175,
-		"effect": [
-			[
-				"AR",
-				"ATK",
-				20
-			],
-			[
-				"HI",
-				"ATK",
-				10
-			],
-			[
-				"HI",
-				"DEF",
-				10
-			]
-		]
-	},
-	{
-		"name": "Defence",
-		"composition": {
-			"PI": 250,
-			"AR": 50
-		},
-		"cap": 725,
-		"cost": 101,
-		"reinforcecost": 2.175,
-		"upkeep": 0.18125,
-		"effect": [
-			[
-				"AR",
-				"DEF",
-				20
-			],
-			[
-				"PI",
-				"ATK",
-				20
-			],
-			[
-				"PI",
-				"DEF",
-				40
-			]
-		]
-	},
-	{
-		"name": "Cavalry",
-		"composition": {
-			"LC": 200,
-			"HC": 50
-		},
-		"cap": 900,
-		"cost": 126,
-		"reinforcecost": 2.7,
-		"upkeep": 0.225,
-		"effect": [
-			[
-				"LC",
-				"ATK",
-				20
-			],
-			[
-				"LC",
-				"DEF",
-				20
-			]
-		]
-	},
-	{
-		"name": "Skirmish",
-		"composition": {
-			"HI": 50,
-			"AR": 200
-		},
-		"cap": 550,
-		"cost": 77,
-		"reinforcecost": 1.65,
-		"upkeep": 0.1375,
-		"effect": [
-			[
-				"AR",
-				"ATK",
-				20
-			],
-			[
-				"AR",
-				"DEF",
-				10
-			],
-			[
-				"HI",
-				"DEF",
-				10
-			]
-		]
-	},
-	{
-		"name": "Light Skirmish",
-		"composition": {
-			"LI": 400,
-			"AR": 150
-		},
-		"cap": 580,
-		"cost": 81,
-		"reinforcecost": 1.74,
-		"upkeep": 0.145,
-		"effect": [
-			[
-				"AR",
-				"ATK",
-				20
-			],
-			[
-				"AR",
-				"DEF",
-				10
-			],
-			[
-				"LI",
-				"DEF",
-				20
-			],
-			[
-				"LI",
-				"MRL",
-				20
-			]
-		]
-	}
-];
+      var RETINUES = [{
+          "name": "Shock",
+          "composition": {
+            "HI": 200,
+            "AR": 50
+          },
+          "cap": 700,
+          "cost": 98,
+          "reinforcecost": 2.1,
+          "upkeep": 0.175,
+          "effect": [
+            [
+              "AR",
+              "ATK",
+              20
+            ],
+            [
+              "HI",
+              "ATK",
+              10
+            ],
+            [
+              "HI",
+              "DEF",
+              10
+            ]
+          ]
+        },
+        {
+          "name": "Defence",
+          "composition": {
+            "PI": 250,
+            "AR": 50
+          },
+          "cap": 725,
+          "cost": 101,
+          "reinforcecost": 2.175,
+          "upkeep": 0.18125,
+          "effect": [
+            [
+              "AR",
+              "DEF",
+              20
+            ],
+            [
+              "PI",
+              "ATK",
+              20
+            ],
+            [
+              "PI",
+              "DEF",
+              40
+            ]
+          ]
+        },
+        {
+          "name": "Cavalry",
+          "composition": {
+            "LC": 200,
+            "HC": 50
+          },
+          "cap": 900,
+          "cost": 126,
+          "reinforcecost": 2.7,
+          "upkeep": 0.225,
+          "effect": [
+            [
+              "LC",
+              "ATK",
+              20
+            ],
+            [
+              "LC",
+              "DEF",
+              20
+            ]
+          ]
+        },
+        {
+          "name": "Skirmish",
+          "composition": {
+            "HI": 50,
+            "AR": 200
+          },
+          "cap": 550,
+          "cost": 77,
+          "reinforcecost": 1.65,
+          "upkeep": 0.1375,
+          "effect": [
+            [
+              "AR",
+              "ATK",
+              20
+            ],
+            [
+              "AR",
+              "DEF",
+              10
+            ],
+            [
+              "HI",
+              "DEF",
+              10
+            ]
+          ]
+        },
+        {
+          "name": "Light Skirmish",
+          "composition": {
+            "LI": 400,
+            "AR": 150
+          },
+          "cap": 580,
+          "cost": 81,
+          "reinforcecost": 1.74,
+          "upkeep": 0.145,
+          "effect": [
+            [
+              "AR",
+              "ATK",
+              20
+            ],
+            [
+              "AR",
+              "DEF",
+              10
+            ],
+            [
+              "LI",
+              "DEF",
+              20
+            ],
+            [
+              "LI",
+              "MRL",
+              20
+            ]
+          ]
+        }
+      ];
 
 
 
 
 
-var UNITS = {
-	"LI": {
-      
-		"morale": 2,
-        "additionals":0,
-      "amount":0,
-        
-		"maintenance": 0.7,
-		"attack": {
-			"Skirmish": 1,
-			"Melee": 1,
-			"Pursue": 2
-		},
-		"defense": {
-			"Skirmish": 2,
-			"Melee": 1,
-			"Pursue": 2.5
-		}
-	},
-	"HI": {
-		"morale": 4,
-      "additionals":0,
-      "amount":0,
-		"maintenance": 3,
-		"attack": {
-			"Skirmish": 0.25,
-			"Melee": 6,
-			"Pursue": 1
-		},
-		"defense": {
-			"Skirmish": 3,
-			"Melee": 4,
-			"Pursue": 4
-		}
-	},
-	"PI": {
-		"morale": 6,
-      "additionals":0,
-      "amount":0,
-		"maintenance": 2.5,
-		"attack": {
-			"Skirmish": 0.1,
-			"Melee": 4.5,
-			"Pursue": 0.2
-		},
-		"defense": {
-			"Skirmish": 4,
-			"Melee": 4.5,
-			"Pursue": 2
-		}
-	},
-	"LC": {
-		"morale": 4,
-      "additionals":0,
-      "amount":0,
-		"maintenance": 3,
-		"attack": {
-			"Skirmish": 2,
-			"Melee": 3,
-			"Pursue": 6
-		},
-		"defense": {
-			"Skirmish": 4.5,
-			"Melee": 3,
-			"Pursue": 4.5
-		}
-	},
-	"HC": {
-		"morale": 10,
-      "additionals":0,
-      "amount":0,
-		"maintenance": 6,
-		"attack": {
-			"Skirmish": 0.5,
-			"Melee": 10,
-			"Pursue": 4
-		},
-		"defense": {
-			"Skirmish": 4,
-			"Melee": 5,
-			"Pursue": 7.5
-		}
-	},
-	"AR": {
-		"morale": 1,
-      "additionals":0,
-      "amount":0,
-		"maintenance": 2,
-		"attack": {
-			"Skirmish": 2,
-			"Melee": 1,
-			"Pursue": 2
-		},
-		"defense": {
-			"Skirmish": 1.5,
-			"Melee": 1.5,
-			"Pursue": 2.25
-		}
-	},
-	"HA": {
-		"morale": 3,
-      "additionals":0,
-      "amount":0,
-		"maintenance": 4,
-		"attack": {
-			"Skirmish": 4,
-			"Melee": 3,
-			"Pursue": 7
-		},
-		"defense": {
-			"Skirmish": 4,
-			"Melee": 4,
-			"Pursue": 4.5
-		}
-	},
-	"WE": {
-		"morale": 15,
-      "additionals":0,
-      "amount":0,
-		"maintenance": 20,
-		"attack": {
-			"Skirmish": 0.25,
-			"Melee": 25,
-			"Pursue": 0.25
-		},
-		"defense": {
-			"Skirmish": 5,
-			"Melee": 15,
-			"Pursue": 2
-		}
-	},
-	"CC": {
-		"morale": 5,
-      "additionals":0,
-      "amount":0,
-		"maintenance": 3,
-		"attack": {
-			"Skirmish": 4,
-			"Melee": 7,
-			"Pursue": 2
-		},
-		"defense": {
-			"Skirmish": 4.5,
-			"Melee": 3,
-			"Pursue": 2.5
-		}
-	}
-};
+      var UNITS = {
+        "LI": {
 
+          "morale": 2,
+          "additionals": 0,
+          "amount": 0,
 
-var TACTICS = [
-	{
-		"name": "General Skirmish",
-		"duration": 3,
-		"type": "Skirmish",
-		"phase": "Skirmish",
-        "eligibility": true,
-		"weight": 3
-	},
-	{
-		"name": "Harass",
-		"duration": 18,
-		"type": "Harass",
-		"phase": "Skirmish",
-		"eligibility": "LCA >= ALL*0.05 && HA < ALL*0.5 && (LCA < ALL*0.45 || (LCA < 0.75*ALL && general.martial >= 12))",
-		"weight": 2,
-		"modifiers": [
-			[
-				"2 ",
-				" general.martial>=8 && (LC>0.3*SKM || CC>=0.3*SKM)"
-			],
-			[
-				"2 ",
-				" general.martial>= 12 && (LC >= 0.4*SKM || CC >= 0.4*SKM)"
-			],
-			[
-				"2 ",
-				" general.martial>= 16 && (LC >= 0.5*SKM || CC >= 0.5*SKM)"
-			]
-		],
-		"effect": [
-			[
-				"LC",
-				"ATK",
-				300
-			],
-			[
-				"CC",
-				"ATK",
-				300
-			],
-			[
-				"HA",
-				"ATK",
-				-150
-			],
-			[
-				"AR",
-				"ATK",
-				-150
-			],
-			[
-				"LC",
-				"DEF",
-				-40
-			],
-			[
-				"CC",
-				"DEF",
-				-40
-			]
-		],
-		"affinity": "+100% vs Swarm"
-	},
-	{
-		"name": "Disorganized Harass",
-		"duration": 18,
-		"type": "Harass",
-		"phase": "Skirmish",
-		"eligibility": "HA < 0.5*ALL && ((LC >= 0.4*ALL && general.martial<12)  || LC >= 0.75*ALL)",
-		"weight": 2,
-		"modifiers": [
-			[
-				"1.5 ",
-				" LC>=0.5*SKM || CC>=0.5*SKM"
-			],
-			[
-				"1.5 ",
-				" LC>=0.7*SKM || CC>=0.7*SKM"
-			],
-			[
-				"1.5 ",
-				" LC>=0.9*SKM || CC>=0.9*SKM"
-			]
-		],
-		"effect": [
-			[
-				"LC",
-				"ATK",
-				100
-			],
-			[
-				"CC",
-				"ATK",
-				100
-			],
-			[
-				"HA",
-				"ATK",
-				-150
-			],
-			[
-				"AR",
-				"ATK",
-				-150
-			],
-			[
-				"LC",
-				"DEF",
-				-60
-			],
-			[
-				"CC",
-				"DEF",
-				-60
-			]
-		],
-		"affinity": "+100% vs Swarm"
-	},
-	{
-		"name": "Volley Harass",
-		"duration": 18,
-		"type": "Harass",
-		"phase": "Skirmish",
-		"eligibility": "LC >= 0.01*ALL && AR>= 0.01*ALL && AR < 0.3*ALL &&LI >= 0.1*ALL",
-		"weight": 4,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial>=8 && LI>=0.4*ALL&& AR>=0.2*SKM"
-			],
-			[
-				"1.5 ",
-				" general.martial>=12 && LI>=0.4*ALL && AR>=0.2*SKM"
-			],
-			[
-				"1.5 ",
-				" general.martial>=16 && LI>=0.4*ALL && AR>=0.2*SKM"
-			]
-		],
-		"effect": [
-			[
-				"LC",
-				"ATK",
-				100
-			],
-			[
-				"CC",
-				"ATK",
-				100
-			],
-			[
-				"AR",
-				"ATK",
-				60
-			],
-			[
-				"LI",
-				"ATK",
-				80
-			],
-			[
-				"HA",
-				"ATK",
-				-180
-			]
-		],
-		"affinity": "+100% vs Swarm"
-	},
-	{
-		"name": "Volley",
-		"duration": 18,
-		"type": "Volley",
-		"phase": "Skirmish",
-		"eligibility": "AR >= 0.01*ALL && AR < 0.4*ALL",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 8 && AR >= 0.1*SKM"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 12 && AR>=0.2*SKM"
-			],
-			[
-				"1.5 ",
-				" general.martial>= 16 && AR >=0.3*SKM"
-			]
-		],
-		"effect": [
-			[
-				"AR",
-				"ATK",
-				200
-			],
-			[
-				"LC",
-				"ATK",
-				-150
-			],
-			[
-				"CC",
-				"ATK",
-				-150
-			],
-			[
-				"HA",
-				"ATK",
-				-150
-			]
-		],
-		"affinity": "+100% vs Harass"
-	},
-	{
-		"name": "Swarm Volley",
-		"duration": 18,
-		"type": "Volley",
-		"phase": "Skirmish",
-		"eligibility": "AR >= 0.01*ALL && HA >= 0.01 && (!forest && !woods && !mountain && !jungle && !marsh)",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 8 && AR>=0.7*SKM && HA >= 0.3*SKM"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 12 && AR>=0.6*SKM && HA >= 0.3*SKM"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 16 && AR>=0.5*SKM && HA >= 0.3*SKM"
-			]
-		],
-		"effect": [
-			[
-				"AR",
-				"ATK",
-				12
-			],
-			[
-				"HA",
-				"ATK",
-				60
-			],
-			[
-				"LC",
-				"ATK",
-				-180
-			],
-			[
-				"CC",
-				"ATK",
-				-180
-			]
-		],
-		"affinity": "+100% vs Harass"
-	},
-	{
-		"name": "Swarm",
-		"duration": 18,
-		"type": "Swarm",
-		"phase": "Skirmish",
-		"eligibility": "HA >= 0.01*ALL && (!forest && !woods && !mountain && !jungle && !marsh) && (HA < 0.35*ALL || (HA<0.65*ALL && general.martial>=12))",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 8 && HA >= 0.2*SKM"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 12 && HA >= 0.3*SKM"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 16 && HA >= 0.4*SKM"
-			]
-		],
-		"effect": [
-			[
-				"HA",
-				"ATK",
-				100
-			],
-			[
-				"LC",
-				"ATK",
-				-150
-			],
-			[
-				"CC",
-				"ATK",
-				-150
-			],
-			[
-				"AR",
-				"ATK",
-				-150
-			]
-		],
-		"affinity": "+100% vs Volley"
-	},
-	{
-		"name": "Disorganised Swarm",
-		"duration": 18,
-		"type": "Swarm",
-		"phase": "Skirmish",
-		"eligibility": "(!forest && !woods && !mountain && !jungle && !marsh) && ((HA>= 0.3*ALL && general.martial<12)||HA>=0.5*ALL)",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" HA >= 0.5*SKM"
-			],
-			[
-				"1.5 ",
-				" HA >= 0.7*SKM"
-			],
-			[
-				"1.5 ",
-				" HA >= 0.9*SKM"
-			]
-		],
-		"effect": [
-			[
-				"HA",
-				"ATK",
-				50
-			],
-			[
-				"HA",
-				"DEF",
-				-100
-			],
-			[
-				"LC",
-				"ATK",
-				-150
-			],
-			[
-				"CC",
-				"ATK",
-				-150
-			],
-			[
-				"AR",
-				"ATK",
-				-150
-			]
-		]
-	},
-	{
-		"name": "Harass Swarm",
-		"duration": 18,
-		"type": "Swarm",
-		"phase": "Skirmish",
-		"eligibility": "HA>=0.01*ALL && (!forest && !woods && !mountain && !jungle && !marsh) && (HA<0.35*ALL || (HA<0.65*ALL && general.martial>=12))",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial>=8 && HA>=0.2*SKM && (LC >= 0.3*SKM || CC >= 0.3*SKM)"
-			],
-			[
-				"1.5 ",
-				" general.martial>=12 && HA>=0.3*SKM && (LC >= 0.3*SKM || CC >= 0.3*SKM)"
-			],
-			[
-				"1.5 ",
-				" general.martial>=16 && HA>=0.4*SKM && (LC >= 0.3*SKM || CC >= 0.3*SKM)"
-			]
-		],
-		"effect": [
-			[
-				"HA",
-				"ATK",
-				120
-			],
-			[
-				"LC",
-				"ATK",
-				60
-			],
-			[
-				"CC",
-				"ATK",
-				60
-			],
-			[
-				"AR",
-				"ATK",
-				-180
-			]
-		],
-		"affinity": "+100% vs Volley"
-	},
-	{
-		"name": "Shieldwall",
-		"duration": 12,
-		"type": "Defensive",
-		"phase": "Skirmish",
-		"eligibility": "AR>=0.01*ALL && (HI>=0.2*ALL || LI>=0.2*ALL || PI>=0.2*ALL)",
-		"weight": 3,
-		"modifiers": [
-			[
-				"3 ",
-				" general.martial>=12 && PI >= 0.3*MEL"
-			],
-			[
-				"3 ",
-				" general.martial>=12 && HI >= 0.3*MEL"
-			],
-			[
-				"3 ",
-				" general.martial>=16 && PI >= 0.3*MEL\r"
-			],
-			[
-				"3 ",
-				" general.martial>=16 && HI >= 0.3*MEL"
-			]
-		],
-		"effect": [
-			[
-				"HI",
-				"DEF",
-				300
-			],
-			[
-				"PI",
-				"DEF",
-				240
-			],
-			[
-				"LI",
-				"DEF",
-				120
-			],
-			[
-				"AR",
-				"ATK",
-				60
-			],
-			[
-				"LC",
-				"DEF",
-				-50
-			],
-			[
-				"CC",
-				"DEF",
-				-50
-			],
-			[
-				"HC",
-				"DEF",
-				-50
-			],
-			[
-				"HA",
-				"DEF",
-				-50
-			]
-		]
-	},
-	{
-		"name": "Fient",
-		"duration": 12,
-		"type": "Defensive",
-		"phase": "Skirmish",
-		"eligibility": "LI >= 0.2*ALL && AR>=0.2*ALL",
-		"weight": 3,
-		"modifiers": [
-			[
-				"3 ",
-				" general.martial >= 12 && LI >= 0.3*ALL"
-			],
-			[
-				"3 ",
-				" general.martial >= 12 && LI >= 0.4*ALL"
-			]
-		],
-		"effect": [
-			[
-				"LI",
-				"ATK",
-				100
-			],
-			[
-				"AR",
-				"ATK",
-				150
-			],
-			[
-				"LI",
-				"DEF",
-				50
-			],
-			[
-				"HI",
-				"ATK",
-				-50
-			],
-			[
-				"HI",
-				"DEF",
-				-50
-			],
-			[
-				"HC",
-				"ATK",
-				-50
-			],
-			[
-				"HC",
-				"DEF",
-				-50
-			]
-		]
-	},
-	{
-		"name": "Grey Wall",
-		"duration": 12,
-		"type": "Defensive",
-		"phase": "Skirmish",
-		"eligibility": "WE >= 0.025*ALL",
-		"weight": 5,
-		"modifiers": [
-			[
-				"3 ",
-				" general.martial >= 12 && AR >= 0.3*SKM"
-			],
-			[
-				"3 ",
-				" general.martial >= 12 && WE >= 0.05*ALL"
-			],
-			[
-				"3 ",
-				" general.martial >= 12 && WE >= 0.075 * ALL"
-			]
-		],
-		"effect": [
-			[
-				"HI",
-				"DEF",
-				300
-			],
-			[
-				"PI",
-				"DEF",
-				240
-			],
-			[
-				"LI",
-				"DEF",
-				120
-			],
-			[
-				"WE",
-				"DEF",
-				150
-			],
-			[
-				"AR",
-				"ATK",
-				120
-			],
-			[
-				"AR",
-				"DEF",
-				60
-			],
-			[
-				"LC",
-				"DEF",
-				-50
-			],
-			[
-				"HC",
-				"DEF",
-				-50
-			],
-			[
-				"HA",
-				"DEF",
-				-50
-			]
-		]
-	},
-	{
-		"name": "Prepare",
-		"duration": 1,
-		"type": "Defensive",
-		"phase": "Skirmish",
-		"weight": 1,
-		"modifiers": [
-			[
-				"0.1 ",
-				" general.martial>=8"
-			],
-			[
-				"0.1 ",
-				" general.martial>=12"
-			],
-			[
-				"0.1 ",
-				" general.martial >= 16"
-			]
-		]
-	},
-	{
-		"name": "Charge on Undefended",
-		"duration": 2,
-		"type": "Charge",
-		"phase": "Skirmish",
-		"eligibility": "days==3",
-		"weight": 1
-	},
-	{
-		"name": "Charge of Opportunity",
-		"duration": 6,
-		"type": "Charge",
-		"phase": "Skirmish",
-		"eligibility": "days==10",
-		"weight": 3,
-		"effect": [
-			[
-				"HC",
-				"ATK",
-				300
-			],
-			[
-				"HA",
-				"ATK",
-				300
-			],
-			[
-				"HI",
-				"ATK",
-				120
-			]
-		]
-	},
-	{
-		"name": "Charge",
-		"duration": 6,
-		"type": "Charge",
-		"phase": "Skirmish",
-		"eligibility": "days==10",
-		"weight": 10,
-		"modifiers": [
-			[
-				"3 ",
-				" general.martial >= 12 && HA >= 0.3*SKM"
-			],
-			[
-				"3 ",
-				" general.martial >= 12 && HI >= 0.1*MEL"
-			],
-			[
-				"3 ",
-				" general.martial >= 12 && HC >= 0.1*MEL"
-			]
-		],
-		"effect": [
-			[
-				"HC",
-				"ATK",
-				300
-			],
-			[
-				"HA",
-				"ATK",
-				300
-			],
-			[
-				"HI",
-				"ATK",
-				120
-			]
-		]
-	},
-	{
-		"name": "Crushing Charge",
-		"duration": 10,
-		"type": "Charge",
-		"phase": "Skirmish",
-		"eligibility": "days==10 && (WE>=0.01*ALL || HCA >= 0.2)",
-		"weight": 2,
-		"modifiers": [
-			[
-				"3 ",
-				" general.martial >= 8 && WE >= 0.04*ALL"
-			],
-			[
-				"3 ",
-				" general.martial >= 12 && WE >= 0.03 *ALL"
-			],
-			[
-				"3 ",
-				" general.martial >= 18 && WE >= 0.02*ALL"
-			],
-			[
-				"8 ",
-				" general.martial >= 18 && HC >= 0.4*ALL"
-			]
-		],
-		"effect": [
-			[
-				"HC",
-				"ATK",
-				175
-			],
-			[
-				"WE",
-				"ATK",
-				250
-			]
-		]
-	},
-    {
-    "name":"Melee",
-    "duration":1,
-    "type":"Melee",
-    "phase":"Melee",
-    "eligibility":true,
-    "weight":0
-  },
-	{
-		"name": "Wait",
-		"duration": 1,
-		"type": "Stand Fast",
-		"phase": "Melee",
-		"weight": 1
-	},
-	{
-		"name": "Advance",
-		"duration": 18,
-		"type": "Advance",
-		"phase": "Melee",
-		"eligibility": "HI>=0.01*ALL",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 8 && HI >= 0.7*MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 12 && HI >= 0.6 * MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 16 && HI >= 0.5 * MEL"
-			]
-		],
-		"effect": [
-			[
-				"HI",
-				"ATK",
-				300
-			],
-			[
-				"HC",
-				"ATK",
-				-150
-			],
-			[
-				"PI",
-				"ATK",
-				-150
-			]
-		],
-		"affinity": "+300% vs Stand Fast"
-	},
-	{
-		"name": "Awesome Advance",
-		"duration": 18,
-		"type": "Advance",
-		"phase": "Melee",
-		"eligibility": "HI>=0.01*ALL && HCA>=0.01*ALL",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 9 && HI >= 0.7*MEL && HC >= 0.3 *MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 13 && HI >= 0.6*MEL && HC >= 0.3*MEL "
-			],
-			[
-				"1.5 ",
-				" general.martial >= 17 && HI >= 0.5*MEL && HC >= 0.3*MEL"
-			]
-		],
-		"effect": [
-			[
-				"HI",
-				"ATK",
-				240
-			],
-			[
-				"HC",
-				"ATK",
-				60
-			],
-			[
-				"PI",
-				"ATK",
-				-180
-			]
-		],
-		"affinity": "+300% vs Stand Fast"
-	},
-	{
-		"name": "Stand Fast",
-		"duration": 18,
-		"type": "Stand Fast",
-		"phase": "Melee",
-		"eligibility": "PI>=0.01*ALL && forest",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 8 && PI >= 0.7*MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 12 && PI >= 0.6*MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 16 && PI >= 0.5*MEL"
-			]
-		],
-		"effect": [
-			[
-				"PI",
-				"ATK",
-				300
-			],
-			[
-				"HC",
-				"ATK",
-				-150
-			],
-			[
-				"HI",
-				"ATK",
-				-150
-			]
-		],
-		"affinity": "+300% vs Charge"
-	},
-	{
-		"name": "Slow Advance",
-		"duration": 18,
-		"type": "Stand Fast",
-		"phase": "Melee",
-		"eligibility": "PI>=0.01*ALL && HI >= 0.01*ALL",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 8 && PI >= 0.7*MEL && HI >= 0.3*MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 12 && PI >= 0.6*MEL && HI >= 0.3*MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 16 && PI >= 0.5*MEL && HI >= 0.3*MEL"
-			]
-		],
-		"effect": [
-			[
-				"PI",
-				"ATK",
-				240
-			],
-			[
-				"HI",
-				"ATK",
-				60
-			],
-			[
-				"HC",
-				"ATK",
-				-180
-			]
-		],
-		"affinity": "+300% vs Charge"
-	},
-	{
-		"name": "Powerful Charge",
-		"duration": 18,
-		"type": "Charge",
-		"phase": "Melee",
-		"eligibility": "HCA>=0.01*ALL",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 8 && HC >= 0.7*MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 12 && HC >= 0.6*MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 16 && HC >= 0.5*MEL"
-			]
-		],
-		"effect": [
-			[
-				"HC",
-				"ATK",
-				300
-			],
-			[
-				"HI",
-				"ATK",
-				-150
-			],
-			[
-				"PI",
-				"ATK",
-				-150
-			]
-		],
-		"affinity": "+300% vs Advance"
-	},
-	{
-		"name": "Overwhelming Charge",
-		"duration": 18,
-		"type": "Charge",
-		"phase": "Melee",
-		"eligibility": "HCA>=0.01*ALL && PI>=0.01*ALL",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 9 && HC >= 0.7*MEL && PI >= 0.3*MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 13 && HC >= 0.6*MEL && PI >= 0.3*MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 17 && HC >= 0.5*MEL && PI >= 0.3*MEL"
-			]
-		],
-		"effect": [
-			[
-				"HC",
-				"ATK",
-				240
-			],
-			[
-				"PI",
-				"ATK",
-				60
-			],
-			[
-				"HI",
-				"ATK",
-				-180
-			]
-		],
-		"affinity": "+300% vs Advance"
-	},
-	{
-		"name": "Barrage",
-		"duration": 6,
-		"type": "Defensive",
-		"phase": "Melee",
-		"eligibility": "AR>=0.2*ALL",
-		"weight": 3,
-		"modifiers": [
-			[
-				"3 ",
-				" general.martial >= 12 && AR >= 0.3*SKM"
-			],
-			[
-				"3 ",
-				" general.martial >= 12 && HA >= 0.3*SKM"
-			]
-		],
-		"effect": [
-			[
-				"AR",
-				"ATK",
-				240
-			],
-			[
-				"HA",
-				"ATK",
-				240
-			]
-		]
-	},
-	{
-		"name": "Raid",
-		"duration": 6,
-		"type": "Defensive",
-		"phase": "Melee",
-		"eligibility": "LCA>=0.2*ALL && HA < 0.5*ALL",
-		"weight": 3,
-		"modifiers": [
-			[
-				"3 ",
-				" general.martial >= 12 && (LC >= 0.3*ALL || CC >= 0.3*ALL)"
-			],
-			[
-				"3 ",
-				" general.martial >= 12 && LI >= 0.3*ALL"
-			]
-		],
-		"effect": [
-			[
-				"LC",
-				"ATK",
-				240
-			],
-			[
-				"CC",
-				"ATK",
-				240
-			],
-			[
-				"LI",
-				"ATK",
-				240
-			]
-		]
-	},
-	{
-		"name": "Force Back",
-		"duration": 24,
-		"type": "Stand Fast",
-		"phase": "Melee",
-		"eligibility": "WE >= 0.005*ALL || PI >= 0.25*ALL || HI >= 0.25*ALL",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 8 && (PI >= 0.7*MEL || HI >= 0.3*MEL || WE>=0.04*ALL)"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 12 && (PI >= 0.6*MEL || HI >= 0.3*MEL || WE>=0.02*ALL)"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 16 && (PI >= 0.5*MEL || HI >= 0.3*MEL || WE>=0.01*ALL)"
-			]
-		],
-		"effect": [
-			[
-				"PI",
-				"ATK",
-				240
-			],
-			[
-				"HI",
-				"ATK",
-				160
-			],
-			[
-				"WE",
-				"ATK",
-				120
-			],
-			[
-				"HC",
-				"ATK",
-				-180
-			],
-			[
-				"AR",
-				"ATK",
-				-100
-			],
-			[
-				"LC",
-				"DEF",
-				-20
-			],
-			[
-				"HA",
-				"DEF",
-				-100
-			]
-		],
-		"affinity": "+300% vs Charge"
-	},
-	{
-		"name": "Elephant Trample",
-		"duration": 12,
-		"type": "Advance",
-		"phase": "Melee",
-		"eligibility": "WE >= 0.01*ALL",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 8 && (PI >= 0.7*MEL || HI >= 0.3*MEL || WE >= 0.04*ALL || HC >= 0.25*ALL)"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 12 && (PI >= 0.6*MEL || HI >= 0.3*MEL || WE >= 0.02*ALL || HC >= 0.25*ALL)"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 16 && (PI >= 0.5*MEL || HI >= 0.3*MEL || WE >= 0.01*ALL || HC >= 0.25*ALL)"
-			]
-		],
-		"effect": [
-			[
-				"WE",
-				"ATK",
-				250
-			],
-			[
-				"WE",
-				"DEF",
-				-40
-			],
-			[
-				"HC",
-				"ATK",
-				200
-			],
-			[
-				"HI",
-				"ATK",
-				200
-			],
-			[
-				"PI",
-				"ATK",
-				200
-			],
-			[
-				"LC",
-				"ATK",
-				50
-			],
-			[
-				"LC",
-				"DEF",
-				-20
-			],
-			[
-				"AR",
-				"ATK",
-				-100
-			],
-			[
-				"HA",
-				"ATK",
-				-100
-			]
-		]
-	},
-	{
-		"name": "Pursue",
-		"duration": 15,
-		"type": "Charge",
-		"phase": "Pursue",
-		"weight": 10
-	},
-	{
-		"name": "Reckless Charge\n(Worth or Aggressive Leader)",
-		"duration": 6,
-		"type": "Charge",
-		"phase": "Skirmish",
-		"eligibility": "days==10 && (general.wroth || general.aggressive)",
-		"weight": 10,
-		"modifiers": [
-			[
-				"3 ",
-				" general.martial < 7 && HA >= 0.3&SKM"
-			],
-			[
-				"3 ",
-				" general.martial < 7 && HC >= 0.1&MEL"
-			],
-			[
-				"3 ",
-				" general.martial < 7 && HI >= 0.1&MEL"
-			]
-		],
-		"effect": [
-			[
-				"HC",
-				"ATK",
-				120
-			],
-			[
-				"HA",
-				"ATK",
-				120
-			],
-			[
-				"HI",
-				"ATK",
-				60
-			],
-			[
-				"HI",
-				"DEF",
-				-30
-			],
-			[
-				"HC",
-				"DEF",
-				-50
-			],
-			[
-				"HA",
-				"DEF",
-				-50
-			]
-		]
-	},
-	{
-		"name": "Timid Advance\n(Craven or Organizer)",
-		"duration": 18,
-		"type": "Advance",
-		"phase": "Melee",
-		"eligibility": "HI >= 0.01*ALL && (general.craven || general.organizer)",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial < 7 && HI >= 0.5*MEL"
-			]
-		],
-		"effect": [
-			[
-				"PI",
-				"ATK",
-				120
-			],
-			[
-				"HC",
-				"ATK",
-				-210
-			],
-			[
-				"HI",
-				"ATK",
-				-210
-			]
-		],
-		"affinity": "+120% vs Stand Fast"
-	},
-	{
-		"name": "Confused Orders\n(Lisp or Stutter)",
-		"duration": 18,
-		"type": "Volley",
-		"phase": "Skirmish",
-		"eligibility": "AR>=0.01*ALL && (general.lisp || general.stutter)",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial < 7 && AR >= 0.5*SKM"
-			]
-		],
-		"effect": [
-			[
-				"AR",
-				"ATK",
-				-120
-			],
-			[
-				"HA",
-				"ATK",
-				-120
-			]
-		],
-		"affinity": "-120% vs Charge"
-	},
-	{
-		"name": "Hesitant Commander\n(Slothful or Shy)",
-		"duration": 18,
-		"type": "Stand Fast",
-		"phase": "Melee",
-		"eligibility": "general.slothful || general.shy",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial < 7"
-			]
-		],
-		"effect": [
-			[
-				"HC",
-				"ATK",
-				-150
-			],
-			[
-				"HI",
-				"ATK",
-				-150
-			]
-		]
-	},
-	{
-		"name": "Charging Own Skirmishers\n(Cruel)",
-		"duration": 6,
-		"type": "Charge",
-		"phase": "Skirmish",
-		"eligibility": "days==10 && general.cruel",
-		"weight": 10,
-		"modifiers": [
-			[
-				"3 ",
-				" general.martial < 10 && HC >= 0.1*MEL"
-			],
-			[
-				"3 ",
-				" general.martial < 10 && (LC >= 0.1*SKM || CC >= 0.1*SKM)"
-			]
-		],
-		"effect": [
-			[
-				"HC",
-				"ATK",
-				300
-			],
-			[
-				"LC",
-				"ATK",
-				180
-			],
-			[
-				"CC",
-				"ATK",
-				180
-			],
-			[
-				"HA",
-				"DEF",
-				-30
-			],
-			[
-				"AR",
-				"DEF",
-				-50
-			],
-			[
-				"HA",
-				"ATK",
-				-120
-			],
-			[
-				"AR",
-				"ATK",
-				-420
-			]
-		]
-	},
-	{
-		"name": "Inspired Defense\n(Inspiring Leader or Defender)",
-		"duration": 12,
-		"type": "Defensive",
-		"phase": "Skirmish",
-		"eligibility": "general.inspiring || general.defensive",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 14"
-			],
-			[
-				"3 ",
-				" general.martial >= 14 && general.defensive"
-			]
-		],
-		"effect": [
-			[
-				"HC",
-				"DEF",
-				150
-			],
-			[
-				"HI",
-				"DEF",
-				150
-			],
-			[
-				"LI",
-				"DEF",
-				150
-			],
-			[
-				"LC",
-				"DEF",
-				150
-			],
-			[
-				"CC",
-				"DEF",
-				150
-			],
-			[
-				"AR",
-				"DEF",
-				150
-			],
-			[
-				"HA",
-				"DEF",
-				150
-			],
-			[
-				"PI",
-				"DEF",
-				150
-			],
-			[
-				"WE",
-				"DEF",
-				150
-			]
-		],
-		"affinity": "+120% vs Charge\n\n+60% vs Advance"
-	},
-	{
-		"name": "Heroic Countercharge\n(Aggressive Leader, Brave, or Cavalry Leader",
-		"duration": 18,
-		"type": "Charge",
-		"phase": "Melee",
-		"eligibility": "HCA>=0.01*ALL && LCA >= 0.01*ALL && (general.aggressive || general.brave || general.cavalry)",
-		"weight": 3,
-		"modifiers": [
-			[
-				"3 ",
-				" general.martial >= 14 && HC >= 0.1*MEL"
-			]
-		],
-		"effect": [
-			[
-				"HC",
-				"ATK",
-				360
-			],
-			[
-				"LC",
-				"ATK",
-				360
-			],
-			[
-				"CC",
-				"ATK",
-				360
-			],
-			[
-				"HI",
-				"ATK",
-				60
-			],
-			[
-				"PI",
-				"ATK",
-				60
-			]
-		],
-		"affinity": "+300% vs Charge"
-	},
-	{
-		"name": "Clever Ambush\n(Trickster or Quick)",
-		"duration": 18,
-		"type": "Stand Fast",
-		"phase": "Melee",
-		"eligibility": "LCA >= 0.1*ALL && LI >= 0.1*ALL && (general.trickster || general.quick || general.genius || general.shrewd) &&(forest|| hills||mountain)",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 14 && (LC >= 0.2*ALL || CC>= 0.2*ALL) && LI >= 0.2*ALL"
-			],
-			[
-				"3 ",
-				" general.martial>=14 && general.trickster && (LC >= 0.2*ALL || CC >= 0.2*ALL) && LI>=0.2*ALL"
-			]
-		],
-		"effect": [
-			[
-				"LC",
-				"ATK",
-				240
-			],
-			[
-				"CC",
-				"ATK",
-				240
-			],
-			[
-				"LI",
-				"ATK",
-				120
-			],
-			[
-				"HA",
-				"ATK",
-				120
-			],
-			[
-				"HA",
-				"ATK",
-				120
-			]
-		],
-		"affinity": "+300% vs Advance"
-	},
-	{
-		"name": "Religious Fervour\n(Possessed, or Inspiring Leader and Zealous)",
-		"duration": 18,
-		"type": "Advance",
-		"phase": "Melee",
-		"eligibility": "general.possessed || (general.zealous && general.inspiring)",
-		"weight": 3,
-		"modifiers": [
-			[
-				"3 ",
-				" general.martial >= 14 && general.possessed"
-			]
-		],
-		"effect": [
-			[
-				"HC",
-				"ATK",
-				150
-			],
-			[
-				"HI",
-				"ATK",
-				150
-			],
-			[
-				"LI",
-				"ATK",
-				150
-			],
-			[
-				"LC",
-				"ATK",
-				150
-			],
-			[
-				"CC",
-				"ATK",
-				150
-			],
-			[
-				"AR",
-				"ATK",
-				150
-			],
-			[
-				"HA",
-				"ATK",
-				150
-			],
-			[
-				"PI",
-				"ATK",
-				150
-			],
-			[
-				"WE",
-				"ATK",
-				150
-			]
-		]
-	},
-	{
-		"name": "Retreat and Ambush\n(Altaic)",
-		"duration": 6,
-		"type": "Defensive",
-		"phase": "Melee",
-		"eligibility": "general.cgroup=='altaic' && HA>=0.2*ALL (!forest && !woods && !mountain && !jungle && !marsh)",
-		"weight": 2,
-		"modifiers": [
-			[
-				"2 ",
-				" general.martial >= 10 && HA >= 0.3*SKM"
-			],
-			[
-				"2 ",
-				" general.martial >=4 && HA >= 0.4*SKM"
-			]
-		],
-		"effect": [
-			[
-				"HA",
-				"ATK",
-				200
-			],
-			[
-				"LC",
-				"ATK",
-				120
-			],
-			[
-				"AR",
-				"ATK",
-				100
-			]
-		]
-	},
-	{
-		"name": "Berserker Charge\n(Scandinavian)",
-		"duration": 18,
-		"type": "Charge",
-		"phase": "Melee",
-		"eligibility": "general.cgroup=='northgermanic' && HI>=0.01*ALL",
-		"weight": 3,
-		"modifiers": [
-			[
-				"3 ",
-				" general.martial >= 10 && HI >= 0.3*MEL"
-			]
-		],
-		"effect": [
-			[
-				"HI",
-				"ATK",
-				360
-			],
-			[
-				"LI",
-				"ATK",
-				120
-			],
-			[
-				"HI",
-				"DEF",
-				-50
-			],
-			[
-				"LI",
-				"DEF",
-				-30
-			]
-		],
-		"affinity": "+100% vs Stand Fast"
-	},
-	{
-		"name": "Schiltron Formation\n(Scottish)",
-		"duration": 18,
-		"type": "Stand Fast",
-		"phase": "Melee",
-		"eligibility": "general.culture=='scottish' && PI>=0.01*ALL",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 8 && PI >= 0.6*MEL && HI >= 0.3*MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 12 && PI >= 0.5*MEL && HI >= 0.3*MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 16 && PI >= 0.4*MEL && HI >= 0.2*MEL"
-			]
-		],
-		"effect": [
-			[
-				"PI",
-				"DEF",
-				360
-			],
-			[
-				"PI",
-				"ATK",
-				240
-			],
-			[
-				"HI",
-				"DEF",
-				240
-			],
-			[
-				"LI",
-				"DEF",
-				120
-			],
-			[
-				"AR",
-				"ATK",
-				60
-			],
-			[
-				"LC",
-				"DEF",
-				-40
-			],
-			[
-				"HC",
-				"DEF",
-				-40
-			],
-			[
-				"HA",
-				"DEF",
-				-40
-			]
-		],
-		"affinity": "+300% vs Charge"
-	},
-	{
-		"name": "Pike Column Advance\n(Italian)",
-		"duration": 18,
-		"type": "Advance",
-		"phase": "Melee",
-		"eligibility": "general.culture=='italian' && PI>=0.01*ALL",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 8 && PI >= 0.6*MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >=12 && PI >= 0.5*MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 16 && PI >= 0.4*MEL"
-			]
-		],
-		"effect": [
-			[
-				"PI",
-				"ATK",
-				300
-			],
-			[
-				"HI",
-				"ATK",
-				120
-			],
-			[
-				"HC",
-				"ATK",
-				60
-			]
-		],
-		"affinity": "+300% vs Stand Fast"
-	},
-	{
-		"name": "Massive Longbow Volley\n(English or Welsh)",
-		"duration": 18,
-		"type": "Volley",
-		"phase": "Skirmish",
-		"eligibility": "(general.culture=='english' || general.culture=='welsh') && AR>=0.01*ALL",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 8 && AR >= 0.6*SKM"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 12 && AR >= 0.5*SKM"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 16 && AR >= 0.4*SKM"
-			]
-		],
-		"effect": [
-			[
-				"AR",
-				"ATK",
-				350
-			]
-		],
-		"affinity": "100% vs Harass, +100% vs Charge"
-	},
-	{
-		"name": "Couched Lance Charge\n(Frankish, Occitan, Breton,\nNorman, or German)",
-		"duration": 18,
-		"type": "Charge",
-		"phase": "Melee",
-		"eligibility": "(general.culture=='french'||general.culture=='occitan'|| general.culture=='norman'||general.culture=='german'|| general.culture=='breton')&&HCA>=0.01*ALL",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 8 && HC >= 0.6*MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 12 && HC >= 0.5*MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 16 && HC >= 0.4*MEL"
-			]
-		],
-		"effect": [
-			[
-				"HC",
-				"ATK",
-				420
-			],
-			[
-				"PI",
-				"ATK",
-				60
-			],
-			[
-				"HI",
-				"ATK",
-				-60
-			]
-		],
-		"affinity": "+300% vs Advance"
-	},
-	{
-		"name": "Mountain Ambush",
-		"duration": 18,
-		"type": "Stand Fast",
-		"phase": "Melee",
-		"eligibility": "general.cgroup=='tibetan' && general.martial>=9 && LI>=0.1*ALL&& (hills || mountain)",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" LI >= 0.2*ALL"
-			],
-			[
-				"2 ",
-				" general.martial >= 14"
-			],
-			[
-				"3 ",
-				" general.trickster"
-			]
-		],
-		"effect": [
-			[
-				"LC",
-				"ATK",
-				240
-			],
-			[
-				"LI",
-				"ATK",
-				150
-			],
-			[
-				"HI",
-				"ATK",
-				125
-			],
-			[
-				"HA",
-				"ATK",
-				150
-			],
-			[
-				"AR",
-				"ATK",
-				120
-			]
-		],
-		"affinity": "+300% vs Advance"
-	},
-	{
-		"name": "Desert Ambush\n(Arabic)",
-		"duration": 18,
-		"type": "Stand Fast",
-		"phase": "Melee",
-		"eligibility": "general.cgroup=='arabic' && desert && LCA>=0.1*ALL && LI >= 0.1*ALL",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 10 && (LC >= 0.2*ALL || CC >= 0.2*ALL) && LI >= 0.2*ALL"
-			],
-			[
-				"3 ",
-				" general.martial >= 10 && general.trickster && (LC >= 0.2*ALL || CC >= 0.2*ALL) & LI >= 0.2*ALL"
-			]
-		],
-		"effect": [
-			[
-				"LC",
-				"ATK",
-				180
-			],
-			[
-				"CC",
-				"ATK",
-				240
-			],
-			[
-				"LI",
-				"ATK",
-				240
-			],
-			[
-				"HA",
-				"ATK",
-				120
-			],
-			[
-				"AR",
-				"ATK",
-				120
-			]
-		],
-		"affinity": "+300% vs Advance"
-	},
-	{
-		"name": "Embolon Charge Formation\n(Byzantine)",
-		"duration": 18,
-		"type": "Charge",
-		"phase": "Melee",
-		"eligibility": "general.cgroup=='byzantine' && HCA>=0.01",
-		"weight": 3,
-		"modifiers": [
-			[
-				"1.5 ",
-				" general.martial >= 8 && HC >= 0.6*MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 12 && HC >= 0.5*MEL"
-			],
-			[
-				"1.5 ",
-				" general.martial >= 16 && HC >= 0.4*MEL"
-			]
-		],
-		"effect": [
-			[
-				"HC",
-				"ATK",
-				240
-			],
-			[
-				"LC",
-				"ATK",
-				180
-			],
-			[
-				"PI",
-				"ATK",
-				60
-			],
-			[
-				"HI",
-				"ATK",
-				-120
-			]
-		],
-		"affinity": "+300% vs Advance"
-	}
-];
-
-var IMGMAP={
-
-  'LI':'https://ck2.paradoxwikis.com/images/thumb/7/7c/Light_infantry.png/24px-Light_infantry.png',
-  'HI':'https://ck2.paradoxwikis.com/images/thumb/0/0e/Heavy_infantry.png/24px-Heavy_infantry.png',
-  'PI':'https://ck2.paradoxwikis.com/images/thumb/3/31/Pikemen.png/24px-Pikemen.png',
-  'LC':'https://ck2.paradoxwikis.com/images/thumb/f/fc/Light_cavalry.png/24px-Light_cavalry.png',
-  'HC':'https://ck2.paradoxwikis.com/images/thumb/2/2f/Heavy_cavalry.png/24px-Heavy_cavalry.png',
-  'AR':'https://ck2.paradoxwikis.com/images/thumb/2/24/Archers.png/24px-Archers.png',
-  'HA':'https://ck2.paradoxwikis.com/images/thumb/8/8f/Horse_archers.png/24px-Horse_archers.png',
-  'WE':'https://ck2.paradoxwikis.com/images/thumb/9/96/War_elephants.png/24px-War_elephants.png',
-  'CC':'https://ck2.paradoxwikis.com/images/thumb/4/4e/Camel_cavalry.png/24px-Camel_cavalry.png',
-  
-  'forest':'',
-  'hills':'',
-  'woods':'',
-  'mountain':'',
-  'marsh':'',
-  'jungle':'',
-  'desert':'',
-  
-  'wroth':'https://ck2.paradoxwikis.com/images/a/a8/Wroth.png',
-  'craven':'https://ck2.paradoxwikis.com/images/0/05/Craven.png',
-  'lisp':'https://ck2.paradoxwikis.com/images/e/ec/Lisp.png',
-  'stutter':'https://ck2.paradoxwikis.com/images/c/c5/Stutter.png',
-  'slothful':'https://ck2.paradoxwikis.com/images/4/40/Slothful.png',
-  'shy':'https://ck2.paradoxwikis.com/images/f/f0/Shy.png',
-  'cruel':'https://ck2.paradoxwikis.com/images/4/48/Cruel.png',
-  
-  'brave':'https://ck2.paradoxwikis.com/images/5/5b/Brave.png',
-  'quick':'https://ck2.paradoxwikis.com/images/8/84/Quick.png',
-  'genius':'https://ck2.paradoxwikis.com/images/2/2d/Genius.png',
-  'shrewd':'https://ck2.paradoxwikis.com/images/0/08/Shrewd.png',
-  'possessed':'https://ck2.paradoxwikis.com/images/1/18/Possessed.png',
-  'zealous':'https://ck2.paradoxwikis.com/images/6/67/Zealous.png',
-  
-  'inspiring':'https://ck2.paradoxwikis.com/images/8/86/Inspiring_leader.png',
-  'defensive':'https://ck2.paradoxwikis.com/images/1/16/Defensive_leader.png',
-  'organizer':'https://ck2.paradoxwikis.com/images/6/6c/Organizer.png',
-  'aggressive':'https://ck2.paradoxwikis.com/images/5/5f/Aggressive_leader.png',
-  'cavalry':'https://ck2.paradoxwikis.com/images/c/c8/Cavalry_leader.png',
-  'trickster':'https://ck2.paradoxwikis.com/images/b/bd/Trickster.png',
-  
-  'Skirmish':'https://ck2.paradoxwikis.com/images/3/34/Skirmish.png',
-  'Melee':'https://ck2.paradoxwikis.com/images/8/8f/Melee.png'
-};
-
-var EMPTY_TACTIC = {"name":"NOTHING", "prob":0};
-
-var TERRAINS = {'forest':false,
-                 'hills':false,
-                 'woods':false,
-                 'mountain':false,
-                 'marsh':false,
-                 'jungle':false,
-                 'desert':false};
-
-var BADTRAITS = {'wroth':false,
-                'craven':false,
-                'lisp':false,
-                'stutter':false,
-                'slothful':false,
-                'shy':false,
-                'cruel':false};
-var LIFETRAITS = {
-  'brave':false,
-  'quick':false,
-  'genius':false,
-  'shrewd':false,
-  'possessed':false,
-  'zealous':false
-};
-
-var COMBATTRAITS={
-  'inspiring':false,
-  'defensive':false,
-  'organizer':false,
-  'aggressive':false,
-  'cavalry':false,
-  'trickster':false
-};
-
-
-var CGROUPS=[
-						'none',
-						'altaic',
-             'arabic',
-             'byzantine',
-            'northgermanic',
-            'tibetan'];
-var CULTURES=[
-  'breton',
-  'english',
-  'french',
-  'german',
-  'italian',
-  'norman',
-  'occitan',
-  'scottish',
-];
-
-var PHASES=[
-  'Skirmish',
-  'Melee'
-];
-
-var DAYS=[
-  0,3,10
-];
-
-
-var NUM_UNITS = {
-	"LI": 0,
-	"HI": 0,
-	"PI": 0,
-	"LC": 0,
-	"HC": 0,
-	"AR": 0,
-	"HA": 0,
-	"WE": 0,
-	"CC": 0
-};
-
-var ADD_UNITS = {
-	"LI": 0,
-	"HI": 0,
-	"PI": 0,
-	"LC": 0,
-	"HC": 0,
-	"AR": 0,
-	"HA": 0,
-	"WE": 0,
-	"CC": 0
-};
-
-var CUSTOM_RETINUE = {
-	"LI": 0,
-	"HI": 0,
-	"PI": 0,
-	"LC": 0,
-	"HC": 0,
-	"AR": 0,
-	"HA": 0,
-	"WE": 0,
-	"CC": 0
-};
-
-var NUM_RETINUES = {
-	"Shock":0,
-	"Defence":0,
-	"Cavalry":0,
-	"Skirmish":0,
-	"Light Skirmish":0
-};
-
-var NUM_HORDES = {
-	"Light Rider":0,
-	"Maurauder":0,
-	"Skirmish Cavalry":0,
-	"Light Horse Archer":0,
-	"Light Vanguard":0,
-	"Heavy Vanguard":0,
-	"Horse Archer":0,
-	"Lancer":0,
-	"Camel Cavalry":0,
-	"Elephant Cavalry":0
-};
-
-var field = new Vue({
-  el: '#retinue', 
-  data: {
-    msg:"",
-    retinues: RETINUES,
-    hordes: HORDES,
-    units: UNITS,
-    tactics: TACTICS,
-    terrain:TERRAINS,
-    bad_traits:BADTRAITS,
-    life_traits:LIFETRAITS,
-    combat_traits:COMBATTRAITS,
-    result_tactics:[EMPTY_TACTIC],
-    
-    
-    num_units : NUM_UNITS,
-    add_units : ADD_UNITS,
-    custom_retinue : CUSTOM_RETINUE,
-    custom_retinue_amount:0,
-    
-    cost_retinue:0,
-    cost_all:0,
-    
-    num_retinues : NUM_RETINUES,
-    num_hordes : NUM_HORDES,
-    cgroups:CGROUPS,
-    cultures:CULTURES,
-    phases:PHASES,
-    DAYS:DAYS,
-    days:0,
-    
-    general : {'martial':16, 'cgroup':'northgermanic', 'culture_input':'northgermanic', 'culture':'northgermanic'},
-    phase:"Skirmish",
-    
-    IMGMAP:IMGMAP
-    
-  },
-
-  mounted:function(){
-  
-     
-        
-        
-    this.onChange();
-  },
-  computed:{
-    maxGeneralTraits:function(){
-      return Math.max(
-        Object.keys(this.bad_traits).length,
-        Object.keys(this.life_traits).length,
-        Object.keys(this.combat_traits).length
-      );
-    },
-    
-    getUnitKey:function(index){
-    	return Object.keys(this.custom_retinue)[index];
-    }
-  },
-  watch:{
-  	phase:function(){
-    	this.onChange();
-    },
-    days:function(){
-    	this.onChange();
-    },
-    terrain:{
-      handler(val){
-        this.onChange();
-      },
-      deep:true
-      
-    },
-    general:{
-      handler(val){
-        this.onChange();
-      },
-      deep:true
-    },
-    num_retinues:{
-      handler(val){
-      	console.log('retinue handler is on');
-        
-        this.onChange();
-      },
-      deep:true
-      
-    },
-    num_hordes:{
-    	handler(val){
-      	this.onChange();
-      },
-      deep:true
-    },
-    
-    add_units:{
-      handler(val){
-      	console.log('unit handler is on');
-        
-        
-        this.onChange();
-      },
-      deep:true
-      
-    },
-    
-    custom_retinue:{
-    	handler(val){
-        this.onChange();
-      },
-      deep:true
-    },
-    custom_retinue_amount:{
-    	handler(val){
-        this.onChange();
-      }
-    },
-    
-    
-    
-    life_traits:{
-      handler(val){
-        this.onChange();
-      },
-      deep:true
-    },
-    bad_traits:{
-      handler(val){
-        this.onChange();
-      },
-      deep:true
-    },
-    combat_traits:{
-      handler(val){
-        this.onChange();
-      },
-      deep:true
-    },
-  },
-  
-  methods:{
-  
-  	getUnitKey:function(index){
-    	return Object.keys(this.custom_retinue)[index];
-    },
-    
-    divide:function(a,b){
-    	return b==0?0:a/b;
-    },
-
-  	changeUnitAmount:function(){
-    	this.cost_retinue = 0;
-      this.cost_all = 0;
-      
-    	for(var unitname in this.units){
-      	//var unit = this.units[unitname];
-        numunit = Number(this.add_units[unitname]);
-      	this.num_units[unitname]=numunit;
-        this.cost_all += numunit*this.units[unitname]['maintenance'];
-      }
-      
-      for(var unitname in this.custom_retinue){
-      	numunit = Number(this.custom_retinue[unitname])*this.custom_retinue_amount;
-      	this.num_units[unitname]+=numunit;
-        this.cost_retinue += numunit*this.units[unitname]['maintenance'];
-        this.cost_all += numunit*this.units[unitname]['maintenance'];
-      }
-      
-      
-    	for(var i=0; i<this.retinues.length; i++){
-          var retinue = this.retinues[i];
-          
-          var retsize = this.num_retinues[retinue.name];
-          
-          if(retsize>0){
-            for(var unitname in retinue.composition){
-
-              var unitamount = retinue.composition[unitname];
-              numunit = Number(retsize) * Number(unitamount);
-              this.num_units[unitname] += numunit;
-              
-              this.cost_retinue += numunit*this.units[unitname]['maintenance'];
-        			this.cost_all += numunit*this.units[unitname]['maintenance'];
-
-            }
+          "maintenance": 0.7,
+          "attack": {
+            "Skirmish": 1,
+            "Melee": 1,
+            "Pursue": 2
+          },
+          "defense": {
+            "Skirmish": 2,
+            "Melee": 1,
+            "Pursue": 2.5
+          }
+        },
+        "HI": {
+          "morale": 4,
+          "additionals": 0,
+          "amount": 0,
+          "maintenance": 3,
+          "attack": {
+            "Skirmish": 0.25,
+            "Melee": 6,
+            "Pursue": 1
+          },
+          "defense": {
+            "Skirmish": 3,
+            "Melee": 4,
+            "Pursue": 4
+          }
+        },
+        "PI": {
+          "morale": 6,
+          "additionals": 0,
+          "amount": 0,
+          "maintenance": 2.5,
+          "attack": {
+            "Skirmish": 0.1,
+            "Melee": 4.5,
+            "Pursue": 0.2
+          },
+          "defense": {
+            "Skirmish": 4,
+            "Melee": 4.5,
+            "Pursue": 2
+          }
+        },
+        "LC": {
+          "morale": 4,
+          "additionals": 0,
+          "amount": 0,
+          "maintenance": 3,
+          "attack": {
+            "Skirmish": 2,
+            "Melee": 3,
+            "Pursue": 6
+          },
+          "defense": {
+            "Skirmish": 4.5,
+            "Melee": 3,
+            "Pursue": 4.5
+          }
+        },
+        "HC": {
+          "morale": 10,
+          "additionals": 0,
+          "amount": 0,
+          "maintenance": 6,
+          "attack": {
+            "Skirmish": 0.5,
+            "Melee": 10,
+            "Pursue": 4
+          },
+          "defense": {
+            "Skirmish": 4,
+            "Melee": 5,
+            "Pursue": 7.5
+          }
+        },
+        "AR": {
+          "morale": 1,
+          "additionals": 0,
+          "amount": 0,
+          "maintenance": 2,
+          "attack": {
+            "Skirmish": 2,
+            "Melee": 1,
+            "Pursue": 2
+          },
+          "defense": {
+            "Skirmish": 1.5,
+            "Melee": 1.5,
+            "Pursue": 2.25
+          }
+        },
+        "HA": {
+          "morale": 3,
+          "additionals": 0,
+          "amount": 0,
+          "maintenance": 4,
+          "attack": {
+            "Skirmish": 4,
+            "Melee": 3,
+            "Pursue": 7
+          },
+          "defense": {
+            "Skirmish": 4,
+            "Melee": 4,
+            "Pursue": 4.5
+          }
+        },
+        "WE": {
+          "morale": 15,
+          "additionals": 0,
+          "amount": 0,
+          "maintenance": 20,
+          "attack": {
+            "Skirmish": 0.25,
+            "Melee": 25,
+            "Pursue": 0.25
+          },
+          "defense": {
+            "Skirmish": 5,
+            "Melee": 15,
+            "Pursue": 2
+          }
+        },
+        "CC": {
+          "morale": 5,
+          "additionals": 0,
+          "amount": 0,
+          "maintenance": 3,
+          "attack": {
+            "Skirmish": 4,
+            "Melee": 7,
+            "Pursue": 2
+          },
+          "defense": {
+            "Skirmish": 4.5,
+            "Melee": 3,
+            "Pursue": 2.5
           }
         }
-        
-        for(var i=0; i<this.hordes.length; i++){
-        	var horde = this.hordes[i];
-          var hordesize = this.num_hordes[horde.name];
-          
-          if(hordesize>0){
-          	for(var unitname in horde.composition){
-            	var unitamount = horde.composition[unitname];
-              numunit = Number(hordesize)*Number(unitamount);
-              this.num_units[unitname] += numunit;
-              
-              
-            }
-          }
-          
+      };
+
+
+      var TACTICS = [{
+          "name": "General Skirmish",
+          "duration": 3,
+          "type": "Skirmish",
+          "phase": "Skirmish",
+          "eligibility": true,
+          "weight": 3
+        },
+        {
+          "name": "Harass",
+          "duration": 18,
+          "type": "Harass",
+          "phase": "Skirmish",
+          "eligibility": "LCA >= ALL*0.05 && HA < ALL*0.5 && (LCA < ALL*0.45 || (LCA < 0.75*ALL && general.martial >= 12))",
+          "weight": 2,
+          "modifiers": [
+            [
+              "2 ",
+              " general.martial>=8 && (LC>0.3*SKM || CC>=0.3*SKM)"
+            ],
+            [
+              "2 ",
+              " general.martial>= 12 && (LC >= 0.4*SKM || CC >= 0.4*SKM)"
+            ],
+            [
+              "2 ",
+              " general.martial>= 16 && (LC >= 0.5*SKM || CC >= 0.5*SKM)"
+            ]
+          ],
+          "effect": [
+            [
+              "LC",
+              "ATK",
+              300
+            ],
+            [
+              "CC",
+              "ATK",
+              300
+            ],
+            [
+              "HA",
+              "ATK",
+              -150
+            ],
+            [
+              "AR",
+              "ATK",
+              -150
+            ],
+            [
+              "LC",
+              "DEF",
+              -40
+            ],
+            [
+              "CC",
+              "DEF",
+              -40
+            ]
+          ],
+          "affinity": "+100% vs Swarm"
+        },
+        {
+          "name": "Disorganized Harass",
+          "duration": 18,
+          "type": "Harass",
+          "phase": "Skirmish",
+          "eligibility": "HA < 0.5*ALL && ((LC >= 0.4*ALL && general.martial<12)  || LC >= 0.75*ALL)",
+          "weight": 2,
+          "modifiers": [
+            [
+              "1.5 ",
+              " LC>=0.5*SKM || CC>=0.5*SKM"
+            ],
+            [
+              "1.5 ",
+              " LC>=0.7*SKM || CC>=0.7*SKM"
+            ],
+            [
+              "1.5 ",
+              " LC>=0.9*SKM || CC>=0.9*SKM"
+            ]
+          ],
+          "effect": [
+            [
+              "LC",
+              "ATK",
+              100
+            ],
+            [
+              "CC",
+              "ATK",
+              100
+            ],
+            [
+              "HA",
+              "ATK",
+              -150
+            ],
+            [
+              "AR",
+              "ATK",
+              -150
+            ],
+            [
+              "LC",
+              "DEF",
+              -60
+            ],
+            [
+              "CC",
+              "DEF",
+              -60
+            ]
+          ],
+          "affinity": "+100% vs Swarm"
+        },
+        {
+          "name": "Volley Harass",
+          "duration": 18,
+          "type": "Harass",
+          "phase": "Skirmish",
+          "eligibility": "LC >= 0.01*ALL && AR>= 0.01*ALL && AR < 0.3*ALL &&LI >= 0.1*ALL",
+          "weight": 4,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial>=8 && LI>=0.4*ALL&& AR>=0.2*SKM"
+            ],
+            [
+              "1.5 ",
+              " general.martial>=12 && LI>=0.4*ALL && AR>=0.2*SKM"
+            ],
+            [
+              "1.5 ",
+              " general.martial>=16 && LI>=0.4*ALL && AR>=0.2*SKM"
+            ]
+          ],
+          "effect": [
+            [
+              "LC",
+              "ATK",
+              100
+            ],
+            [
+              "CC",
+              "ATK",
+              100
+            ],
+            [
+              "AR",
+              "ATK",
+              60
+            ],
+            [
+              "LI",
+              "ATK",
+              80
+            ],
+            [
+              "HA",
+              "ATK",
+              -180
+            ]
+          ],
+          "affinity": "+100% vs Swarm"
+        },
+        {
+          "name": "Volley",
+          "duration": 18,
+          "type": "Volley",
+          "phase": "Skirmish",
+          "eligibility": "AR >= 0.01*ALL && AR < 0.4*ALL",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 8 && AR >= 0.1*SKM"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 12 && AR>=0.2*SKM"
+            ],
+            [
+              "1.5 ",
+              " general.martial>= 16 && AR >=0.3*SKM"
+            ]
+          ],
+          "effect": [
+            [
+              "AR",
+              "ATK",
+              200
+            ],
+            [
+              "LC",
+              "ATK",
+              -150
+            ],
+            [
+              "CC",
+              "ATK",
+              -150
+            ],
+            [
+              "HA",
+              "ATK",
+              -150
+            ]
+          ],
+          "affinity": "+100% vs Harass"
+        },
+        {
+          "name": "Swarm Volley",
+          "duration": 18,
+          "type": "Volley",
+          "phase": "Skirmish",
+          "eligibility": "AR >= 0.01*ALL && HA >= 0.01 && (!forest && !woods && !mountain && !jungle && !marsh)",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 8 && AR>=0.7*SKM && HA >= 0.3*SKM"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 12 && AR>=0.6*SKM && HA >= 0.3*SKM"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 16 && AR>=0.5*SKM && HA >= 0.3*SKM"
+            ]
+          ],
+          "effect": [
+            [
+              "AR",
+              "ATK",
+              12
+            ],
+            [
+              "HA",
+              "ATK",
+              60
+            ],
+            [
+              "LC",
+              "ATK",
+              -180
+            ],
+            [
+              "CC",
+              "ATK",
+              -180
+            ]
+          ],
+          "affinity": "+100% vs Harass"
+        },
+        {
+          "name": "Swarm",
+          "duration": 18,
+          "type": "Swarm",
+          "phase": "Skirmish",
+          "eligibility": "HA >= 0.01*ALL && (!forest && !woods && !mountain && !jungle && !marsh) && (HA < 0.35*ALL || (HA<0.65*ALL && general.martial>=12))",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 8 && HA >= 0.2*SKM"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 12 && HA >= 0.3*SKM"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 16 && HA >= 0.4*SKM"
+            ]
+          ],
+          "effect": [
+            [
+              "HA",
+              "ATK",
+              100
+            ],
+            [
+              "LC",
+              "ATK",
+              -150
+            ],
+            [
+              "CC",
+              "ATK",
+              -150
+            ],
+            [
+              "AR",
+              "ATK",
+              -150
+            ]
+          ],
+          "affinity": "+100% vs Volley"
+        },
+        {
+          "name": "Disorganised Swarm",
+          "duration": 18,
+          "type": "Swarm",
+          "phase": "Skirmish",
+          "eligibility": "(!forest && !woods && !mountain && !jungle && !marsh) && ((HA>= 0.3*ALL && general.martial<12)||HA>=0.5*ALL)",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " HA >= 0.5*SKM"
+            ],
+            [
+              "1.5 ",
+              " HA >= 0.7*SKM"
+            ],
+            [
+              "1.5 ",
+              " HA >= 0.9*SKM"
+            ]
+          ],
+          "effect": [
+            [
+              "HA",
+              "ATK",
+              50
+            ],
+            [
+              "HA",
+              "DEF",
+              -100
+            ],
+            [
+              "LC",
+              "ATK",
+              -150
+            ],
+            [
+              "CC",
+              "ATK",
+              -150
+            ],
+            [
+              "AR",
+              "ATK",
+              -150
+            ]
+          ]
+        },
+        {
+          "name": "Harass Swarm",
+          "duration": 18,
+          "type": "Swarm",
+          "phase": "Skirmish",
+          "eligibility": "HA>=0.01*ALL && (!forest && !woods && !mountain && !jungle && !marsh) && (HA<0.35*ALL || (HA<0.65*ALL && general.martial>=12))",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial>=8 && HA>=0.2*SKM && (LC >= 0.3*SKM || CC >= 0.3*SKM)"
+            ],
+            [
+              "1.5 ",
+              " general.martial>=12 && HA>=0.3*SKM && (LC >= 0.3*SKM || CC >= 0.3*SKM)"
+            ],
+            [
+              "1.5 ",
+              " general.martial>=16 && HA>=0.4*SKM && (LC >= 0.3*SKM || CC >= 0.3*SKM)"
+            ]
+          ],
+          "effect": [
+            [
+              "HA",
+              "ATK",
+              120
+            ],
+            [
+              "LC",
+              "ATK",
+              60
+            ],
+            [
+              "CC",
+              "ATK",
+              60
+            ],
+            [
+              "AR",
+              "ATK",
+              -180
+            ]
+          ],
+          "affinity": "+100% vs Volley"
+        },
+        {
+          "name": "Shieldwall",
+          "duration": 12,
+          "type": "Defensive",
+          "phase": "Skirmish",
+          "eligibility": "AR>=0.01*ALL && (HI>=0.2*ALL || LI>=0.2*ALL || PI>=0.2*ALL)",
+          "weight": 3,
+          "modifiers": [
+            [
+              "3 ",
+              " general.martial>=12 && PI >= 0.3*MEL"
+            ],
+            [
+              "3 ",
+              " general.martial>=12 && HI >= 0.3*MEL"
+            ],
+            [
+              "3 ",
+              " general.martial>=16 && PI >= 0.3*MEL\r"
+            ],
+            [
+              "3 ",
+              " general.martial>=16 && HI >= 0.3*MEL"
+            ]
+          ],
+          "effect": [
+            [
+              "HI",
+              "DEF",
+              300
+            ],
+            [
+              "PI",
+              "DEF",
+              240
+            ],
+            [
+              "LI",
+              "DEF",
+              120
+            ],
+            [
+              "AR",
+              "ATK",
+              60
+            ],
+            [
+              "LC",
+              "DEF",
+              -50
+            ],
+            [
+              "CC",
+              "DEF",
+              -50
+            ],
+            [
+              "HC",
+              "DEF",
+              -50
+            ],
+            [
+              "HA",
+              "DEF",
+              -50
+            ]
+          ]
+        },
+        {
+          "name": "Fient",
+          "duration": 12,
+          "type": "Defensive",
+          "phase": "Skirmish",
+          "eligibility": "LI >= 0.2*ALL && AR>=0.2*ALL",
+          "weight": 3,
+          "modifiers": [
+            [
+              "3 ",
+              " general.martial >= 12 && LI >= 0.3*ALL"
+            ],
+            [
+              "3 ",
+              " general.martial >= 12 && LI >= 0.4*ALL"
+            ]
+          ],
+          "effect": [
+            [
+              "LI",
+              "ATK",
+              100
+            ],
+            [
+              "AR",
+              "ATK",
+              150
+            ],
+            [
+              "LI",
+              "DEF",
+              50
+            ],
+            [
+              "HI",
+              "ATK",
+              -50
+            ],
+            [
+              "HI",
+              "DEF",
+              -50
+            ],
+            [
+              "HC",
+              "ATK",
+              -50
+            ],
+            [
+              "HC",
+              "DEF",
+              -50
+            ]
+          ]
+        },
+        {
+          "name": "Grey Wall",
+          "duration": 12,
+          "type": "Defensive",
+          "phase": "Skirmish",
+          "eligibility": "WE >= 0.025*ALL",
+          "weight": 5,
+          "modifiers": [
+            [
+              "3 ",
+              " general.martial >= 12 && AR >= 0.3*SKM"
+            ],
+            [
+              "3 ",
+              " general.martial >= 12 && WE >= 0.05*ALL"
+            ],
+            [
+              "3 ",
+              " general.martial >= 12 && WE >= 0.075 * ALL"
+            ]
+          ],
+          "effect": [
+            [
+              "HI",
+              "DEF",
+              300
+            ],
+            [
+              "PI",
+              "DEF",
+              240
+            ],
+            [
+              "LI",
+              "DEF",
+              120
+            ],
+            [
+              "WE",
+              "DEF",
+              150
+            ],
+            [
+              "AR",
+              "ATK",
+              120
+            ],
+            [
+              "AR",
+              "DEF",
+              60
+            ],
+            [
+              "LC",
+              "DEF",
+              -50
+            ],
+            [
+              "HC",
+              "DEF",
+              -50
+            ],
+            [
+              "HA",
+              "DEF",
+              -50
+            ]
+          ]
+        },
+        {
+          "name": "Prepare",
+          "duration": 1,
+          "type": "Defensive",
+          "phase": "Skirmish",
+          "weight": 1,
+          "modifiers": [
+            [
+              "0.1 ",
+              " general.martial>=8"
+            ],
+            [
+              "0.1 ",
+              " general.martial>=12"
+            ],
+            [
+              "0.1 ",
+              " general.martial >= 16"
+            ]
+          ]
+        },
+        {
+          "name": "Charge on Undefended",
+          "duration": 2,
+          "type": "Charge",
+          "phase": "Skirmish",
+          "eligibility": "days==3",
+          "weight": 1
+        },
+        {
+          "name": "Charge of Opportunity",
+          "duration": 6,
+          "type": "Charge",
+          "phase": "Skirmish",
+          "eligibility": "days==10",
+          "weight": 3,
+          "effect": [
+            [
+              "HC",
+              "ATK",
+              300
+            ],
+            [
+              "HA",
+              "ATK",
+              300
+            ],
+            [
+              "HI",
+              "ATK",
+              120
+            ]
+          ]
+        },
+        {
+          "name": "Charge",
+          "duration": 6,
+          "type": "Charge",
+          "phase": "Skirmish",
+          "eligibility": "days==10",
+          "weight": 10,
+          "modifiers": [
+            [
+              "3 ",
+              " general.martial >= 12 && HA >= 0.3*SKM"
+            ],
+            [
+              "3 ",
+              " general.martial >= 12 && HI >= 0.1*MEL"
+            ],
+            [
+              "3 ",
+              " general.martial >= 12 && HC >= 0.1*MEL"
+            ]
+          ],
+          "effect": [
+            [
+              "HC",
+              "ATK",
+              300
+            ],
+            [
+              "HA",
+              "ATK",
+              300
+            ],
+            [
+              "HI",
+              "ATK",
+              120
+            ]
+          ]
+        },
+        {
+          "name": "Crushing Charge",
+          "duration": 10,
+          "type": "Charge",
+          "phase": "Skirmish",
+          "eligibility": "days==10 && (WE>=0.01*ALL || HCA >= 0.2)",
+          "weight": 2,
+          "modifiers": [
+            [
+              "3 ",
+              " general.martial >= 8 && WE >= 0.04*ALL"
+            ],
+            [
+              "3 ",
+              " general.martial >= 12 && WE >= 0.03 *ALL"
+            ],
+            [
+              "3 ",
+              " general.martial >= 18 && WE >= 0.02*ALL"
+            ],
+            [
+              "8 ",
+              " general.martial >= 18 && HC >= 0.4*ALL"
+            ]
+          ],
+          "effect": [
+            [
+              "HC",
+              "ATK",
+              175
+            ],
+            [
+              "WE",
+              "ATK",
+              250
+            ]
+          ]
+        },
+        {
+          "name": "Melee",
+          "duration": 1,
+          "type": "Melee",
+          "phase": "Melee",
+          "eligibility": true,
+          "weight": 0
+        },
+        {
+          "name": "Wait",
+          "duration": 1,
+          "type": "Stand Fast",
+          "phase": "Melee",
+          "weight": 1
+        },
+        {
+          "name": "Advance",
+          "duration": 18,
+          "type": "Advance",
+          "phase": "Melee",
+          "eligibility": "HI>=0.01*ALL",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 8 && HI >= 0.7*MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 12 && HI >= 0.6 * MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 16 && HI >= 0.5 * MEL"
+            ]
+          ],
+          "effect": [
+            [
+              "HI",
+              "ATK",
+              300
+            ],
+            [
+              "HC",
+              "ATK",
+              -150
+            ],
+            [
+              "PI",
+              "ATK",
+              -150
+            ]
+          ],
+          "affinity": "+300% vs Stand Fast"
+        },
+        {
+          "name": "Awesome Advance",
+          "duration": 18,
+          "type": "Advance",
+          "phase": "Melee",
+          "eligibility": "HI>=0.01*ALL && HCA>=0.01*ALL",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 9 && HI >= 0.7*MEL && HC >= 0.3 *MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 13 && HI >= 0.6*MEL && HC >= 0.3*MEL "
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 17 && HI >= 0.5*MEL && HC >= 0.3*MEL"
+            ]
+          ],
+          "effect": [
+            [
+              "HI",
+              "ATK",
+              240
+            ],
+            [
+              "HC",
+              "ATK",
+              60
+            ],
+            [
+              "PI",
+              "ATK",
+              -180
+            ]
+          ],
+          "affinity": "+300% vs Stand Fast"
+        },
+        {
+          "name": "Stand Fast",
+          "duration": 18,
+          "type": "Stand Fast",
+          "phase": "Melee",
+          "eligibility": "PI>=0.01*ALL && forest",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 8 && PI >= 0.7*MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 12 && PI >= 0.6*MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 16 && PI >= 0.5*MEL"
+            ]
+          ],
+          "effect": [
+            [
+              "PI",
+              "ATK",
+              300
+            ],
+            [
+              "HC",
+              "ATK",
+              -150
+            ],
+            [
+              "HI",
+              "ATK",
+              -150
+            ]
+          ],
+          "affinity": "+300% vs Charge"
+        },
+        {
+          "name": "Slow Advance",
+          "duration": 18,
+          "type": "Stand Fast",
+          "phase": "Melee",
+          "eligibility": "PI>=0.01*ALL && HI >= 0.01*ALL",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 8 && PI >= 0.7*MEL && HI >= 0.3*MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 12 && PI >= 0.6*MEL && HI >= 0.3*MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 16 && PI >= 0.5*MEL && HI >= 0.3*MEL"
+            ]
+          ],
+          "effect": [
+            [
+              "PI",
+              "ATK",
+              240
+            ],
+            [
+              "HI",
+              "ATK",
+              60
+            ],
+            [
+              "HC",
+              "ATK",
+              -180
+            ]
+          ],
+          "affinity": "+300% vs Charge"
+        },
+        {
+          "name": "Powerful Charge",
+          "duration": 18,
+          "type": "Charge",
+          "phase": "Melee",
+          "eligibility": "HCA>=0.01*ALL",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 8 && HC >= 0.7*MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 12 && HC >= 0.6*MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 16 && HC >= 0.5*MEL"
+            ]
+          ],
+          "effect": [
+            [
+              "HC",
+              "ATK",
+              300
+            ],
+            [
+              "HI",
+              "ATK",
+              -150
+            ],
+            [
+              "PI",
+              "ATK",
+              -150
+            ]
+          ],
+          "affinity": "+300% vs Advance"
+        },
+        {
+          "name": "Overwhelming Charge",
+          "duration": 18,
+          "type": "Charge",
+          "phase": "Melee",
+          "eligibility": "HCA>=0.01*ALL && PI>=0.01*ALL",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 9 && HC >= 0.7*MEL && PI >= 0.3*MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 13 && HC >= 0.6*MEL && PI >= 0.3*MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 17 && HC >= 0.5*MEL && PI >= 0.3*MEL"
+            ]
+          ],
+          "effect": [
+            [
+              "HC",
+              "ATK",
+              240
+            ],
+            [
+              "PI",
+              "ATK",
+              60
+            ],
+            [
+              "HI",
+              "ATK",
+              -180
+            ]
+          ],
+          "affinity": "+300% vs Advance"
+        },
+        {
+          "name": "Barrage",
+          "duration": 6,
+          "type": "Defensive",
+          "phase": "Melee",
+          "eligibility": "AR>=0.2*ALL",
+          "weight": 3,
+          "modifiers": [
+            [
+              "3 ",
+              " general.martial >= 12 && AR >= 0.3*SKM"
+            ],
+            [
+              "3 ",
+              " general.martial >= 12 && HA >= 0.3*SKM"
+            ]
+          ],
+          "effect": [
+            [
+              "AR",
+              "ATK",
+              240
+            ],
+            [
+              "HA",
+              "ATK",
+              240
+            ]
+          ]
+        },
+        {
+          "name": "Raid",
+          "duration": 6,
+          "type": "Defensive",
+          "phase": "Melee",
+          "eligibility": "LCA>=0.2*ALL && HA < 0.5*ALL",
+          "weight": 3,
+          "modifiers": [
+            [
+              "3 ",
+              " general.martial >= 12 && (LC >= 0.3*ALL || CC >= 0.3*ALL)"
+            ],
+            [
+              "3 ",
+              " general.martial >= 12 && LI >= 0.3*ALL"
+            ]
+          ],
+          "effect": [
+            [
+              "LC",
+              "ATK",
+              240
+            ],
+            [
+              "CC",
+              "ATK",
+              240
+            ],
+            [
+              "LI",
+              "ATK",
+              240
+            ]
+          ]
+        },
+        {
+          "name": "Force Back",
+          "duration": 24,
+          "type": "Stand Fast",
+          "phase": "Melee",
+          "eligibility": "WE >= 0.005*ALL || PI >= 0.25*ALL || HI >= 0.25*ALL",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 8 && (PI >= 0.7*MEL || HI >= 0.3*MEL || WE>=0.04*ALL)"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 12 && (PI >= 0.6*MEL || HI >= 0.3*MEL || WE>=0.02*ALL)"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 16 && (PI >= 0.5*MEL || HI >= 0.3*MEL || WE>=0.01*ALL)"
+            ]
+          ],
+          "effect": [
+            [
+              "PI",
+              "ATK",
+              240
+            ],
+            [
+              "HI",
+              "ATK",
+              160
+            ],
+            [
+              "WE",
+              "ATK",
+              120
+            ],
+            [
+              "HC",
+              "ATK",
+              -180
+            ],
+            [
+              "AR",
+              "ATK",
+              -100
+            ],
+            [
+              "LC",
+              "DEF",
+              -20
+            ],
+            [
+              "HA",
+              "DEF",
+              -100
+            ]
+          ],
+          "affinity": "+300% vs Charge"
+        },
+        {
+          "name": "Elephant Trample",
+          "duration": 12,
+          "type": "Advance",
+          "phase": "Melee",
+          "eligibility": "WE >= 0.01*ALL",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 8 && (PI >= 0.7*MEL || HI >= 0.3*MEL || WE >= 0.04*ALL || HC >= 0.25*ALL)"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 12 && (PI >= 0.6*MEL || HI >= 0.3*MEL || WE >= 0.02*ALL || HC >= 0.25*ALL)"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 16 && (PI >= 0.5*MEL || HI >= 0.3*MEL || WE >= 0.01*ALL || HC >= 0.25*ALL)"
+            ]
+          ],
+          "effect": [
+            [
+              "WE",
+              "ATK",
+              250
+            ],
+            [
+              "WE",
+              "DEF",
+              -40
+            ],
+            [
+              "HC",
+              "ATK",
+              200
+            ],
+            [
+              "HI",
+              "ATK",
+              200
+            ],
+            [
+              "PI",
+              "ATK",
+              200
+            ],
+            [
+              "LC",
+              "ATK",
+              50
+            ],
+            [
+              "LC",
+              "DEF",
+              -20
+            ],
+            [
+              "AR",
+              "ATK",
+              -100
+            ],
+            [
+              "HA",
+              "ATK",
+              -100
+            ]
+          ]
+        },
+        {
+          "name": "Pursue",
+          "duration": 15,
+          "type": "Charge",
+          "phase": "Pursue",
+          "weight": 10
+        },
+        {
+          "name": "Reckless Charge\n(Worth or Aggressive Leader)",
+          "duration": 6,
+          "type": "Charge",
+          "phase": "Skirmish",
+          "eligibility": "days==10 && (general.wroth || general.aggressive)",
+          "weight": 10,
+          "modifiers": [
+            [
+              "3 ",
+              " general.martial < 7 && HA >= 0.3&SKM"
+            ],
+            [
+              "3 ",
+              " general.martial < 7 && HC >= 0.1&MEL"
+            ],
+            [
+              "3 ",
+              " general.martial < 7 && HI >= 0.1&MEL"
+            ]
+          ],
+          "effect": [
+            [
+              "HC",
+              "ATK",
+              120
+            ],
+            [
+              "HA",
+              "ATK",
+              120
+            ],
+            [
+              "HI",
+              "ATK",
+              60
+            ],
+            [
+              "HI",
+              "DEF",
+              -30
+            ],
+            [
+              "HC",
+              "DEF",
+              -50
+            ],
+            [
+              "HA",
+              "DEF",
+              -50
+            ]
+          ]
+        },
+        {
+          "name": "Timid Advance\n(Craven or Organizer)",
+          "duration": 18,
+          "type": "Advance",
+          "phase": "Melee",
+          "eligibility": "HI >= 0.01*ALL && (general.craven || general.organizer)",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial < 7 && HI >= 0.5*MEL"
+            ]
+          ],
+          "effect": [
+            [
+              "PI",
+              "ATK",
+              120
+            ],
+            [
+              "HC",
+              "ATK",
+              -210
+            ],
+            [
+              "HI",
+              "ATK",
+              -210
+            ]
+          ],
+          "affinity": "+120% vs Stand Fast"
+        },
+        {
+          "name": "Confused Orders\n(Lisp or Stutter)",
+          "duration": 18,
+          "type": "Volley",
+          "phase": "Skirmish",
+          "eligibility": "AR>=0.01*ALL && (general.lisp || general.stutter)",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial < 7 && AR >= 0.5*SKM"
+            ]
+          ],
+          "effect": [
+            [
+              "AR",
+              "ATK",
+              -120
+            ],
+            [
+              "HA",
+              "ATK",
+              -120
+            ]
+          ],
+          "affinity": "-120% vs Charge"
+        },
+        {
+          "name": "Hesitant Commander\n(Slothful or Shy)",
+          "duration": 18,
+          "type": "Stand Fast",
+          "phase": "Melee",
+          "eligibility": "general.slothful || general.shy",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial < 7"
+            ]
+          ],
+          "effect": [
+            [
+              "HC",
+              "ATK",
+              -150
+            ],
+            [
+              "HI",
+              "ATK",
+              -150
+            ]
+          ]
+        },
+        {
+          "name": "Charging Own Skirmishers\n(Cruel)",
+          "duration": 6,
+          "type": "Charge",
+          "phase": "Skirmish",
+          "eligibility": "days==10 && general.cruel",
+          "weight": 10,
+          "modifiers": [
+            [
+              "3 ",
+              " general.martial < 10 && HC >= 0.1*MEL"
+            ],
+            [
+              "3 ",
+              " general.martial < 10 && (LC >= 0.1*SKM || CC >= 0.1*SKM)"
+            ]
+          ],
+          "effect": [
+            [
+              "HC",
+              "ATK",
+              300
+            ],
+            [
+              "LC",
+              "ATK",
+              180
+            ],
+            [
+              "CC",
+              "ATK",
+              180
+            ],
+            [
+              "HA",
+              "DEF",
+              -30
+            ],
+            [
+              "AR",
+              "DEF",
+              -50
+            ],
+            [
+              "HA",
+              "ATK",
+              -120
+            ],
+            [
+              "AR",
+              "ATK",
+              -420
+            ]
+          ]
+        },
+        {
+          "name": "Inspired Defense\n(Inspiring Leader or Defender)",
+          "duration": 12,
+          "type": "Defensive",
+          "phase": "Skirmish",
+          "eligibility": "general.inspiring || general.defensive",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 14"
+            ],
+            [
+              "3 ",
+              " general.martial >= 14 && general.defensive"
+            ]
+          ],
+          "effect": [
+            [
+              "HC",
+              "DEF",
+              150
+            ],
+            [
+              "HI",
+              "DEF",
+              150
+            ],
+            [
+              "LI",
+              "DEF",
+              150
+            ],
+            [
+              "LC",
+              "DEF",
+              150
+            ],
+            [
+              "CC",
+              "DEF",
+              150
+            ],
+            [
+              "AR",
+              "DEF",
+              150
+            ],
+            [
+              "HA",
+              "DEF",
+              150
+            ],
+            [
+              "PI",
+              "DEF",
+              150
+            ],
+            [
+              "WE",
+              "DEF",
+              150
+            ]
+          ],
+          "affinity": "+120% vs Charge\n\n+60% vs Advance"
+        },
+        {
+          "name": "Heroic Countercharge\n(Aggressive Leader, Brave, or Cavalry Leader",
+          "duration": 18,
+          "type": "Charge",
+          "phase": "Melee",
+          "eligibility": "HCA>=0.01*ALL && LCA >= 0.01*ALL && (general.aggressive || general.brave || general.cavalry)",
+          "weight": 3,
+          "modifiers": [
+            [
+              "3 ",
+              " general.martial >= 14 && HC >= 0.1*MEL"
+            ]
+          ],
+          "effect": [
+            [
+              "HC",
+              "ATK",
+              360
+            ],
+            [
+              "LC",
+              "ATK",
+              360
+            ],
+            [
+              "CC",
+              "ATK",
+              360
+            ],
+            [
+              "HI",
+              "ATK",
+              60
+            ],
+            [
+              "PI",
+              "ATK",
+              60
+            ]
+          ],
+          "affinity": "+300% vs Charge"
+        },
+        {
+          "name": "Clever Ambush\n(Trickster or Quick)",
+          "duration": 18,
+          "type": "Stand Fast",
+          "phase": "Melee",
+          "eligibility": "LCA >= 0.1*ALL && LI >= 0.1*ALL && (general.trickster || general.quick || general.genius || general.shrewd) &&(forest|| hills||mountain)",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 14 && (LC >= 0.2*ALL || CC>= 0.2*ALL) && LI >= 0.2*ALL"
+            ],
+            [
+              "3 ",
+              " general.martial>=14 && general.trickster && (LC >= 0.2*ALL || CC >= 0.2*ALL) && LI>=0.2*ALL"
+            ]
+          ],
+          "effect": [
+            [
+              "LC",
+              "ATK",
+              240
+            ],
+            [
+              "CC",
+              "ATK",
+              240
+            ],
+            [
+              "LI",
+              "ATK",
+              120
+            ],
+            [
+              "HA",
+              "ATK",
+              120
+            ],
+            [
+              "HA",
+              "ATK",
+              120
+            ]
+          ],
+          "affinity": "+300% vs Advance"
+        },
+        {
+          "name": "Religious Fervour\n(Possessed, or Inspiring Leader and Zealous)",
+          "duration": 18,
+          "type": "Advance",
+          "phase": "Melee",
+          "eligibility": "general.possessed || (general.zealous && general.inspiring)",
+          "weight": 3,
+          "modifiers": [
+            [
+              "3 ",
+              " general.martial >= 14 && general.possessed"
+            ]
+          ],
+          "effect": [
+            [
+              "HC",
+              "ATK",
+              150
+            ],
+            [
+              "HI",
+              "ATK",
+              150
+            ],
+            [
+              "LI",
+              "ATK",
+              150
+            ],
+            [
+              "LC",
+              "ATK",
+              150
+            ],
+            [
+              "CC",
+              "ATK",
+              150
+            ],
+            [
+              "AR",
+              "ATK",
+              150
+            ],
+            [
+              "HA",
+              "ATK",
+              150
+            ],
+            [
+              "PI",
+              "ATK",
+              150
+            ],
+            [
+              "WE",
+              "ATK",
+              150
+            ]
+          ]
+        },
+        {
+          "name": "Retreat and Ambush\n(Altaic)",
+          "duration": 6,
+          "type": "Defensive",
+          "phase": "Melee",
+          "eligibility": "general.cgroup=='altaic' && HA>=0.2*ALL (!forest && !woods && !mountain && !jungle && !marsh)",
+          "weight": 2,
+          "modifiers": [
+            [
+              "2 ",
+              " general.martial >= 10 && HA >= 0.3*SKM"
+            ],
+            [
+              "2 ",
+              " general.martial >=4 && HA >= 0.4*SKM"
+            ]
+          ],
+          "effect": [
+            [
+              "HA",
+              "ATK",
+              200
+            ],
+            [
+              "LC",
+              "ATK",
+              120
+            ],
+            [
+              "AR",
+              "ATK",
+              100
+            ]
+          ]
+        },
+        {
+          "name": "Berserker Charge\n(Scandinavian)",
+          "duration": 18,
+          "type": "Charge",
+          "phase": "Melee",
+          "eligibility": "general.cgroup=='northgermanic' && HI>=0.01*ALL",
+          "weight": 3,
+          "modifiers": [
+            [
+              "3 ",
+              " general.martial >= 10 && HI >= 0.3*MEL"
+            ]
+          ],
+          "effect": [
+            [
+              "HI",
+              "ATK",
+              360
+            ],
+            [
+              "LI",
+              "ATK",
+              120
+            ],
+            [
+              "HI",
+              "DEF",
+              -50
+            ],
+            [
+              "LI",
+              "DEF",
+              -30
+            ]
+          ],
+          "affinity": "+100% vs Stand Fast"
+        },
+        {
+          "name": "Schiltron Formation\n(Scottish)",
+          "duration": 18,
+          "type": "Stand Fast",
+          "phase": "Melee",
+          "eligibility": "general.culture=='scottish' && PI>=0.01*ALL",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 8 && PI >= 0.6*MEL && HI >= 0.3*MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 12 && PI >= 0.5*MEL && HI >= 0.3*MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 16 && PI >= 0.4*MEL && HI >= 0.2*MEL"
+            ]
+          ],
+          "effect": [
+            [
+              "PI",
+              "DEF",
+              360
+            ],
+            [
+              "PI",
+              "ATK",
+              240
+            ],
+            [
+              "HI",
+              "DEF",
+              240
+            ],
+            [
+              "LI",
+              "DEF",
+              120
+            ],
+            [
+              "AR",
+              "ATK",
+              60
+            ],
+            [
+              "LC",
+              "DEF",
+              -40
+            ],
+            [
+              "HC",
+              "DEF",
+              -40
+            ],
+            [
+              "HA",
+              "DEF",
+              -40
+            ]
+          ],
+          "affinity": "+300% vs Charge"
+        },
+        {
+          "name": "Pike Column Advance\n(Italian)",
+          "duration": 18,
+          "type": "Advance",
+          "phase": "Melee",
+          "eligibility": "general.culture=='italian' && PI>=0.01*ALL",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 8 && PI >= 0.6*MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >=12 && PI >= 0.5*MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 16 && PI >= 0.4*MEL"
+            ]
+          ],
+          "effect": [
+            [
+              "PI",
+              "ATK",
+              300
+            ],
+            [
+              "HI",
+              "ATK",
+              120
+            ],
+            [
+              "HC",
+              "ATK",
+              60
+            ]
+          ],
+          "affinity": "+300% vs Stand Fast"
+        },
+        {
+          "name": "Massive Longbow Volley\n(English or Welsh)",
+          "duration": 18,
+          "type": "Volley",
+          "phase": "Skirmish",
+          "eligibility": "(general.culture=='english' || general.culture=='welsh') && AR>=0.01*ALL",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 8 && AR >= 0.6*SKM"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 12 && AR >= 0.5*SKM"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 16 && AR >= 0.4*SKM"
+            ]
+          ],
+          "effect": [
+            [
+              "AR",
+              "ATK",
+              350
+            ]
+          ],
+          "affinity": "100% vs Harass, +100% vs Charge"
+        },
+        {
+          "name": "Couched Lance Charge\n(Frankish, Occitan, Breton,\nNorman, or German)",
+          "duration": 18,
+          "type": "Charge",
+          "phase": "Melee",
+          "eligibility": "(general.culture=='french'||general.culture=='occitan'|| general.culture=='norman'||general.culture=='german'|| general.culture=='breton')&&HCA>=0.01*ALL",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 8 && HC >= 0.6*MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 12 && HC >= 0.5*MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 16 && HC >= 0.4*MEL"
+            ]
+          ],
+          "effect": [
+            [
+              "HC",
+              "ATK",
+              420
+            ],
+            [
+              "PI",
+              "ATK",
+              60
+            ],
+            [
+              "HI",
+              "ATK",
+              -60
+            ]
+          ],
+          "affinity": "+300% vs Advance"
+        },
+        {
+          "name": "Mountain Ambush",
+          "duration": 18,
+          "type": "Stand Fast",
+          "phase": "Melee",
+          "eligibility": "general.cgroup=='tibetan' && general.martial>=9 && LI>=0.1*ALL&& (hills || mountain)",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " LI >= 0.2*ALL"
+            ],
+            [
+              "2 ",
+              " general.martial >= 14"
+            ],
+            [
+              "3 ",
+              " general.trickster"
+            ]
+          ],
+          "effect": [
+            [
+              "LC",
+              "ATK",
+              240
+            ],
+            [
+              "LI",
+              "ATK",
+              150
+            ],
+            [
+              "HI",
+              "ATK",
+              125
+            ],
+            [
+              "HA",
+              "ATK",
+              150
+            ],
+            [
+              "AR",
+              "ATK",
+              120
+            ]
+          ],
+          "affinity": "+300% vs Advance"
+        },
+        {
+          "name": "Desert Ambush\n(Arabic)",
+          "duration": 18,
+          "type": "Stand Fast",
+          "phase": "Melee",
+          "eligibility": "general.cgroup=='arabic' && desert && LCA>=0.1*ALL && LI >= 0.1*ALL",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 10 && (LC >= 0.2*ALL || CC >= 0.2*ALL) && LI >= 0.2*ALL"
+            ],
+            [
+              "3 ",
+              " general.martial >= 10 && general.trickster && (LC >= 0.2*ALL || CC >= 0.2*ALL) & LI >= 0.2*ALL"
+            ]
+          ],
+          "effect": [
+            [
+              "LC",
+              "ATK",
+              180
+            ],
+            [
+              "CC",
+              "ATK",
+              240
+            ],
+            [
+              "LI",
+              "ATK",
+              240
+            ],
+            [
+              "HA",
+              "ATK",
+              120
+            ],
+            [
+              "AR",
+              "ATK",
+              120
+            ]
+          ],
+          "affinity": "+300% vs Advance"
+        },
+        {
+          "name": "Embolon Charge Formation\n(Byzantine)",
+          "duration": 18,
+          "type": "Charge",
+          "phase": "Melee",
+          "eligibility": "general.cgroup=='byzantine' && HCA>=0.01",
+          "weight": 3,
+          "modifiers": [
+            [
+              "1.5 ",
+              " general.martial >= 8 && HC >= 0.6*MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 12 && HC >= 0.5*MEL"
+            ],
+            [
+              "1.5 ",
+              " general.martial >= 16 && HC >= 0.4*MEL"
+            ]
+          ],
+          "effect": [
+            [
+              "HC",
+              "ATK",
+              240
+            ],
+            [
+              "LC",
+              "ATK",
+              180
+            ],
+            [
+              "PI",
+              "ATK",
+              60
+            ],
+            [
+              "HI",
+              "ATK",
+              -120
+            ]
+          ],
+          "affinity": "+300% vs Advance"
         }
-    },
-    onChange:function(){
-      this.changeUnitAmount();
-      
-      
-      
-      //Units
-      for(var unitname in this.units){
-        //var unit = this.units[unitname];
-        eval("var "+unitname+" = Number("+this.num_units[unitname] + ");");
-      }
+      ];
 
-      //Days(for charging tactics only) and phase
-      days = this.days;
-      phase = this.phase;
-      
-  
-  
-      //No need to worry from now on
-      LCA = LC + HA + CC;
-      HCA = HC + WE;
-  
-      ALL = LCA + HCA + AR + LI + PI + HI;  
-      SKM = LCA + AR;
-      MEL = HC + HI + PI;
-  
-  
-      //Just to handle the case when there's 0 of something.
-      //You would never have at least more than 100thousands of something.... probably...
-      if(ALL===0) ALL = 99999999;
-      if(SKM===0) SKM = 99999999;
-      if(MEL===0) MEL = 99999999;
-      
+      var IMGMAP = {
 
-      //Get terrain setting
-      for(key in this.terrain){
-        eval('var '+key+' = '+this.terrain[key]);
-        
-      }
-      
+        'LI': 'https://ck2.paradoxwikis.com/images/thumb/7/7c/Light_infantry.png/24px-Light_infantry.png',
+        'HI': 'https://ck2.paradoxwikis.com/images/thumb/0/0e/Heavy_infantry.png/24px-Heavy_infantry.png',
+        'PI': 'https://ck2.paradoxwikis.com/images/thumb/3/31/Pikemen.png/24px-Pikemen.png',
+        'LC': 'https://ck2.paradoxwikis.com/images/thumb/f/fc/Light_cavalry.png/24px-Light_cavalry.png',
+        'HC': 'https://ck2.paradoxwikis.com/images/thumb/2/2f/Heavy_cavalry.png/24px-Heavy_cavalry.png',
+        'AR': 'https://ck2.paradoxwikis.com/images/thumb/2/24/Archers.png/24px-Archers.png',
+        'HA': 'https://ck2.paradoxwikis.com/images/thumb/8/8f/Horse_archers.png/24px-Horse_archers.png',
+        'WE': 'https://ck2.paradoxwikis.com/images/thumb/9/96/War_elephants.png/24px-War_elephants.png',
+        'CC': 'https://ck2.paradoxwikis.com/images/thumb/4/4e/Camel_cavalry.png/24px-Camel_cavalry.png',
 
-      //Get flank leader setting
-      general = this.general;
-      general.culture = general.culture_input;
-      general.cgroup = general.culture_input;
-      
-      for(trait in this.combat_traits){
-      	eval('general["'+trait+'"] = '+ this.combat_traits[trait]);
-      }
-      for(trait in this.life_traits){
-      	eval('general["'+trait+'"] = '+ this.life_traits[trait]);
-      }
-      for(trait in this.bad_traits){
-      	eval('general["'+trait+'"] = '+ this.bad_traits[trait]);
-      }
+        'forest': '',
+        'hills': '',
+        'woods': '',
+        'mountain': '',
+        'marsh': '',
+        'jungle': '',
+        'desert': '',
 
-      
-      this.result_tactics = [];
-      
-      var totalweight = 0;
-      
-      
-      
-      var counter = 0;
-      
-      for(var i=0; i<this.tactics.length; i++){
-        
-        
-        var tactic = this.tactics[i];
-        if(tactic.phase != phase)
-          continue;
+        'wroth': 'https://ck2.paradoxwikis.com/images/a/a8/Wroth.png',
+        'craven': 'https://ck2.paradoxwikis.com/images/0/05/Craven.png',
+        'lisp': 'https://ck2.paradoxwikis.com/images/e/ec/Lisp.png',
+        'stutter': 'https://ck2.paradoxwikis.com/images/c/c5/Stutter.png',
+        'slothful': 'https://ck2.paradoxwikis.com/images/4/40/Slothful.png',
+        'shy': 'https://ck2.paradoxwikis.com/images/f/f0/Shy.png',
+        'cruel': 'https://ck2.paradoxwikis.com/images/4/48/Cruel.png',
 
-        if(eval(tactic.eligibility)){
+        'brave': 'https://ck2.paradoxwikis.com/images/5/5b/Brave.png',
+        'quick': 'https://ck2.paradoxwikis.com/images/8/84/Quick.png',
+        'genius': 'https://ck2.paradoxwikis.com/images/2/2d/Genius.png',
+        'shrewd': 'https://ck2.paradoxwikis.com/images/0/08/Shrewd.png',
+        'possessed': 'https://ck2.paradoxwikis.com/images/1/18/Possessed.png',
+        'zealous': 'https://ck2.paradoxwikis.com/images/6/67/Zealous.png',
 
-          weight = Number(tactic.weight);
-          
-          if(tactic.modifiers){
-            for(var j =0; j<tactic.modifiers.length; j++){
-            
-              mod = tactic.modifiers[j];
-            
-            
-              if(eval(mod[1])){
-                weight*=Number(mod[0]);
-              }
-            }
+        'inspiring': 'https://ck2.paradoxwikis.com/images/8/86/Inspiring_leader.png',
+        'defensive': 'https://ck2.paradoxwikis.com/images/1/16/Defensive_leader.png',
+        'organizer': 'https://ck2.paradoxwikis.com/images/6/6c/Organizer.png',
+        'aggressive': 'https://ck2.paradoxwikis.com/images/5/5f/Aggressive_leader.png',
+        'cavalry': 'https://ck2.paradoxwikis.com/images/c/c8/Cavalry_leader.png',
+        'trickster': 'https://ck2.paradoxwikis.com/images/b/bd/Trickster.png',
+
+        'Skirmish': 'https://ck2.paradoxwikis.com/images/3/34/Skirmish.png',
+        'Melee': 'https://ck2.paradoxwikis.com/images/8/8f/Melee.png'
+      };
+
+      var EMPTY_TACTIC = {
+        "name": "NOTHING",
+        "prob": 0
+      };
+
+      var TERRAINS = {
+        'forest': false,
+        'hills': false,
+        'woods': false,
+        'mountain': false,
+        'marsh': false,
+        'jungle': false,
+        'desert': false
+      };
+
+      var BADTRAITS = {
+        'wroth': false,
+        'craven': false,
+        'lisp': false,
+        'stutter': false,
+        'slothful': false,
+        'shy': false,
+        'cruel': false
+      };
+      var LIFETRAITS = {
+        'brave': false,
+        'quick': false,
+        'genius': false,
+        'shrewd': false,
+        'possessed': false,
+        'zealous': false
+      };
+
+      var COMBATTRAITS = {
+        'inspiring': false,
+        'defensive': false,
+        'organizer': false,
+        'aggressive': false,
+        'cavalry': false,
+        'trickster': false
+      };
+
+
+      var CGROUPS = [
+        'none',
+        'altaic',
+        'arabic',
+        'byzantine',
+        'northgermanic',
+        'tibetan'
+      ];
+      var CULTURES = [
+        'breton',
+        'english',
+        'french',
+        'german',
+        'italian',
+        'norman',
+        'occitan',
+        'scottish',
+      ];
+
+      var PHASES = [
+        'Skirmish',
+        'Melee'
+      ];
+
+      var DAYS = [
+        0, 3, 10
+      ];
+
+
+      var NUM_UNITS = {
+        "LI": 0,
+        "HI": 0,
+        "PI": 0,
+        "LC": 0,
+        "HC": 0,
+        "AR": 0,
+        "HA": 0,
+        "WE": 0,
+        "CC": 0
+      };
+
+      var ADD_UNITS = {
+        "LI": 0,
+        "HI": 0,
+        "PI": 0,
+        "LC": 0,
+        "HC": 0,
+        "AR": 0,
+        "HA": 0,
+        "WE": 0,
+        "CC": 0
+      };
+
+      var CUSTOM_RETINUE = {
+        "LI": 0,
+        "HI": 0,
+        "PI": 0,
+        "LC": 0,
+        "HC": 0,
+        "AR": 0,
+        "HA": 0,
+        "WE": 0,
+        "CC": 0
+      };
+
+      var NUM_RETINUES = {
+        "Shock": 0,
+        "Defence": 0,
+        "Cavalry": 0,
+        "Skirmish": 0,
+        "Light Skirmish": 0
+      };
+
+      var NUM_HORDES = {
+        "Light Rider": 0,
+        "Maurauder": 0,
+        "Skirmish Cavalry": 0,
+        "Light Horse Archer": 0,
+        "Light Vanguard": 0,
+        "Heavy Vanguard": 0,
+        "Horse Archer": 0,
+        "Lancer": 0,
+        "Camel Cavalry": 0,
+        "Elephant Cavalry": 0
+      };
+
+      var field = new Vue({
+        el: '#retinue',
+        data: {
+          msg: "",
+          retinues: RETINUES,
+          hordes: HORDES,
+          units: UNITS,
+          tactics: TACTICS,
+          terrain: TERRAINS,
+          bad_traits: BADTRAITS,
+          life_traits: LIFETRAITS,
+          combat_traits: COMBATTRAITS,
+          result_tactics: [EMPTY_TACTIC],
+
+
+          num_units: NUM_UNITS,
+          add_units: ADD_UNITS,
+          custom_retinue: CUSTOM_RETINUE,
+          custom_retinue_amount: 0,
+
+          cost_retinue: 0,
+          cost_all: 0,
+
+          num_retinues: NUM_RETINUES,
+          num_hordes: NUM_HORDES,
+          cgroups: CGROUPS,
+          cultures: CULTURES,
+          phases: PHASES,
+          DAYS: DAYS,
+          days: 0,
+
+          general: {
+            'martial': 16,
+            'cgroup': 'northgermanic',
+            'culture_input': 'northgermanic',
+            'culture': 'northgermanic'
+          },
+          phase: "Skirmish",
+
+          IMGMAP: IMGMAP
+
+        },
+
+        mounted: function () {
+
+
+
+
+          this.onChange();
+        },
+        computed: {
+          maxGeneralTraits: function () {
+            return Math.max(
+              Object.keys(this.bad_traits).length,
+              Object.keys(this.life_traits).length,
+              Object.keys(this.combat_traits).length
+            );
+          },
+
+          getUnitKey: function (index) {
+            return Object.keys(this.custom_retinue)[index];
           }
-                  
-          totalweight += weight;
-          
+        },
+        watch: {
+          phase: function () {
+            this.onChange();
+          },
+          days: function () {
+            this.onChange();
+          },
+          terrain: {
+            handler(val) {
+              this.onChange();
+            },
+            deep: true
 
-					var strength = new Object;
-          strength['ATK']=0;
-          strength['DEF']=0;
-          strength['MRL']=0;
-          
-          for(var unitname in this.units){
-          	unit = this.units[unitname];
-          	strength['ATK'] += Number(unit.attack[phase]) * Number(this.num_units[unitname]);
-            strength['DEF'] += Number(unit.defense[phase]) * Number(this.num_units[unitname]);
-            
-            strength['MRL'] += Number(unit.morale) * Number(this.num_units[unitname]);
-            
-            
-            for (var k in tactic.effect){
-            	effect = tactic.effect[k];
-              if(effect[0]==unitname){
-              	if(effect[1]=='ATK'){
-                	strength['ATK'] += Number(unit.attack[phase]) * Number(this.num_units[unitname]) * 
-                  		Number(effect[2])/100;
-                }else if (effect[1]=='DEF'){
-                	strength['DEF'] += Number(unit.defense[phase]) * Number(this.num_units[unitname]) * 
-                  		Number(effect[2])/100;
-                }else if (effect[2] == 'MRL'){
-                	strength['MRL'] += Number(unit.morale) * Number(this.num_units[unitname]) * 
-                  		Number(effect[2])/100;
+          },
+          general: {
+            handler(val) {
+              this.onChange();
+            },
+            deep: true
+          },
+          num_retinues: {
+            handler(val) {
+              console.log('retinue handler is on');
+
+              this.onChange();
+            },
+            deep: true
+
+          },
+          num_hordes: {
+            handler(val) {
+              this.onChange();
+            },
+            deep: true
+          },
+
+          add_units: {
+            handler(val) {
+              console.log('unit handler is on');
+
+
+              this.onChange();
+            },
+            deep: true
+
+          },
+
+          custom_retinue: {
+            handler(val) {
+              this.onChange();
+            },
+            deep: true
+          },
+          custom_retinue_amount: {
+            handler(val) {
+              this.onChange();
+            }
+          },
+
+
+
+          life_traits: {
+            handler(val) {
+              this.onChange();
+            },
+            deep: true
+          },
+          bad_traits: {
+            handler(val) {
+              this.onChange();
+            },
+            deep: true
+          },
+          combat_traits: {
+            handler(val) {
+              this.onChange();
+            },
+            deep: true
+          },
+        },
+
+        methods: {
+
+          getUnitKey: function (index) {
+            return Object.keys(this.custom_retinue)[index];
+          },
+
+          divide: function (a, b) {
+            return b == 0 ? 0 : a / b;
+          },
+
+          changeUnitAmount: function () {
+            this.cost_retinue = 0;
+            this.cost_all = 0;
+
+            for (var unitname in this.units) {
+              //var unit = this.units[unitname];
+              numunit = Number(this.add_units[unitname]);
+              this.num_units[unitname] = numunit;
+              this.cost_all += numunit * this.units[unitname]['maintenance'];
+            }
+
+            for (var unitname in this.custom_retinue) {
+              numunit = Number(this.custom_retinue[unitname]) * this.custom_retinue_amount;
+              this.num_units[unitname] += numunit;
+              this.cost_retinue += numunit * this.units[unitname]['maintenance'];
+              this.cost_all += numunit * this.units[unitname]['maintenance'];
+            }
+
+
+            for (var i = 0; i < this.retinues.length; i++) {
+              var retinue = this.retinues[i];
+
+              var retsize = this.num_retinues[retinue.name];
+
+              if (retsize > 0) {
+                for (var unitname in retinue.composition) {
+
+                  var unitamount = retinue.composition[unitname];
+                  numunit = Number(retsize) * Number(unitamount);
+                  this.num_units[unitname] += numunit;
+
+                  this.cost_retinue += numunit * this.units[unitname]['maintenance'];
+                  this.cost_all += numunit * this.units[unitname]['maintenance'];
+
                 }
               }
             }
-            
-          
+
+            for (var i = 0; i < this.hordes.length; i++) {
+              var horde = this.hordes[i];
+              var hordesize = this.num_hordes[horde.name];
+
+              if (hordesize > 0) {
+                for (var unitname in horde.composition) {
+                  var unitamount = horde.composition[unitname];
+                  numunit = Number(hordesize) * Number(unitamount);
+                  this.num_units[unitname] += numunit;
+
+
+                }
+              }
+
+            }
+          },
+          onChange: function () {
+            this.changeUnitAmount();
+
+
+
+            //Units
+            for (var unitname in this.units) {
+              //var unit = this.units[unitname];
+              eval("var " + unitname + " = Number(" + this.num_units[unitname] + ");");
+            }
+
+            //Days(for charging tactics only) and phase
+            days = this.days;
+            phase = this.phase;
+
+
+
+            //No need to worry from now on
+            LCA = LC + HA + CC;
+            HCA = HC + WE;
+
+            ALL = LCA + HCA + AR + LI + PI + HI;
+            SKM = LCA + AR;
+            MEL = HC + HI + PI;
+
+
+            //Just to handle the case when there's 0 of something.
+            //You would never have at least more than 100thousands of something.... probably...
+            if (ALL === 0) ALL = 99999999;
+            if (SKM === 0) SKM = 99999999;
+            if (MEL === 0) MEL = 99999999;
+
+
+            //Get terrain setting
+            for (key in this.terrain) {
+              eval('var ' + key + ' = ' + this.terrain[key]);
+
+            }
+
+
+            //Get flank leader setting
+            general = this.general;
+            general.culture = general.culture_input;
+            general.cgroup = general.culture_input;
+
+            for (trait in this.combat_traits) {
+              eval('general["' + trait + '"] = ' + this.combat_traits[trait]);
+            }
+            for (trait in this.life_traits) {
+              eval('general["' + trait + '"] = ' + this.life_traits[trait]);
+            }
+            for (trait in this.bad_traits) {
+              eval('general["' + trait + '"] = ' + this.bad_traits[trait]);
+            }
+
+
+            this.result_tactics = [];
+
+            var totalweight = 0;
+
+
+
+            var counter = 0;
+
+            for (var i = 0; i < this.tactics.length; i++) {
+
+
+              var tactic = this.tactics[i];
+              if (tactic.phase != phase)
+                continue;
+
+              if (eval(tactic.eligibility)) {
+
+                weight = Number(tactic.weight);
+
+                if (tactic.modifiers) {
+                  for (var j = 0; j < tactic.modifiers.length; j++) {
+
+                    mod = tactic.modifiers[j];
+
+
+                    if (eval(mod[1])) {
+                      weight *= Number(mod[0]);
+                    }
+                  }
+                }
+
+                totalweight += weight;
+
+
+                var strength = new Object;
+                strength['ATK'] = 0;
+                strength['DEF'] = 0;
+                strength['MRL'] = 0;
+
+                for (var unitname in this.units) {
+                  unit = this.units[unitname];
+                  strength['ATK'] += Number(unit.attack[phase]) * Number(this.num_units[unitname]);
+                  strength['DEF'] += Number(unit.defense[phase]) * Number(this.num_units[unitname]);
+
+                  strength['MRL'] += Number(unit.morale) * Number(this.num_units[unitname]);
+
+
+                  for (var k in tactic.effect) {
+                    effect = tactic.effect[k];
+                    if (effect[0] == unitname) {
+                      if (effect[1] == 'ATK') {
+                        strength['ATK'] += Number(unit.attack[phase]) * Number(this.num_units[unitname]) *
+                          Number(effect[2]) / 100;
+                      } else if (effect[1] == 'DEF') {
+                        strength['DEF'] += Number(unit.defense[phase]) * Number(this.num_units[unitname]) *
+                          Number(effect[2]) / 100;
+                      } else if (effect[2] == 'MRL') {
+                        strength['MRL'] += Number(unit.morale) * Number(this.num_units[unitname]) *
+                          Number(effect[2]) / 100;
+                      }
+                    }
+                  }
+
+
+                }
+
+                this.result_tactics.push({
+                  "name": tactic.name,
+                  "weight": weight,
+                  "strength": strength
+                });
+
+              }
+
+
+
+              counter++;
+            }
+
+
+            //PostProcessing
+
+
+
+            for (var i in this.result_tactics) {
+              tactic = this.result_tactics[i];
+              tactic['prob'] = tactic.weight / totalweight;
+            };
+
+
+
+
+
+
+
+
+            if (this.result_tactics.length > 1) {
+              var tactic_footer = {
+                'name': 'EXPECTAION (Note: Not a tactic!)',
+                'weight': 0,
+                'prob': 0,
+                'strength': {
+                  'ATK': 0,
+                  'DEF': 0,
+                  'MRL': 0
+                }
+              };
+
+
+              for (var i in this.result_tactics) {
+                tactic = this.result_tactics[i];
+                tactic_footer.strength.ATK += (tactic.strength.ATK * tactic.prob);
+                tactic_footer.strength.DEF += (tactic.strength.DEF * tactic.prob);
+                tactic_footer.strength.MRL += (tactic.strength.MRL * tactic.prob);
+              };
+              for (var i in tactic_footer.strength) {
+                tactic_footer.strength[i] = Math.round(tactic_footer.strength[i]);
+              }
+
+              this.result_tactics.push(tactic_footer);
+
+            }
+
+
+
+
+
+
+            var tactic_header = this.result_tactics[0];
+
+            for (var i in this.result_tactics) {
+              tactic = this.result_tactics[i];
+              tactic['ratio'] = new Object;
+              tactic.ratio['ATK'] = i == 0 ? 0 : Math.round((tactic.strength.ATK / tactic_header.strength.ATK) *
+                100 - 100);
+              tactic.ratio['DEF'] = i == 0 ? 0 : Math.round((tactic.strength.DEF / tactic_header.strength.DEF) *
+                100 - 100);
+              tactic.ratio['MRL'] = i == 0 ? 0 : Math.round((tactic.strength.MRL / tactic_header.strength.MRL) *
+                100 - 100);
+            }
+
+
+
+
+
+
+            if (this.result_tactics.length === 0)
+              this.result_tactics.push(EMPTY_TACTIC);
           }
-          
-          this.result_tactics.push({"name":tactic.name,
-                                    "weight":weight,
-                                    "strength":strength
-                                   });
-          
         }
-        
-        
-        
-      counter++; 
-      }
-      
-      
-      //PostProcessing
-      
 
-
-      for(var i in this.result_tactics){
-        tactic=this.result_tactics[i];
-        tactic['prob'] = tactic.weight / totalweight;
-      };
-      
-      
-
-
-
-
-
-
-			if(this.result_tactics.length >1){
-          var tactic_footer = {'name':'EXPECTAION (Note: Not a tactic!)',
-                              'weight':0,
-                              'prob':0,
-                              'strength':{
-                                'ATK':0,
-                                'DEF':0,
-                                'MRL':0
-                              }
-          };
-          
-          
-        for(var i in this.result_tactics){
-          tactic = this.result_tactics[i];
-          tactic_footer.strength.ATK += (tactic.strength.ATK * tactic.prob);
-          tactic_footer.strength.DEF += (tactic.strength.DEF * tactic.prob);
-          tactic_footer.strength.MRL += (tactic.strength.MRL * tactic.prob);
-        };
-        for(var i in tactic_footer.strength){
-        	tactic_footer.strength[i]=Math.round(tactic_footer.strength[i]);
-        }
-      
-        this.result_tactics.push(tactic_footer);
-                         
-      }   
-      
-      
-
-      
-      
-      
-      var tactic_header = this.result_tactics[0];
-      
-      for(var i in this.result_tactics){
-        tactic = this.result_tactics[i];
-        tactic['ratio']=new Object;
-        tactic.ratio['ATK'] = i==0?0: Math.round((tactic.strength.ATK / tactic_header.strength.ATK)*100-100);
-        tactic.ratio['DEF'] = i==0?0: Math.round((tactic.strength.DEF / tactic_header.strength.DEF)*100-100);
-        tactic.ratio['MRL'] = i==0?0: Math.round((tactic.strength.MRL / tactic_header.strength.MRL)*100-100);
-      }
-
-
-
-
-
-      
-      if(this.result_tactics.length === 0)
-        this.result_tactics.push(EMPTY_TACTIC);
-    }
-  }
-
-});
+      });
 
 
 
     }
-
-</script>
+  </script>
 
 </head>
+
 <body>
   <!DOCTYPE html>
-<html>
+  <html>
 
   <head>
     <meta name="description" content="[add your bin descrdfiption]">
@@ -3029,17 +3039,19 @@ var field = new Vue({
               <table class='table'>
                 <tr v-for="_i in [0,1,2]">
                   <td v-for="i in [_i*3 + 0,_i*3 + 1,_i*3 +2]"> <img :src="IMGMAP[getUnitKey(i)]"> {{getUnitKey(i)}}
-                    <input type="number" value='0' v-model="custom_retinue[getUnitKey(i)]" min=0 style='width:50px'></td>
+                    <input type="number" value='0' v-model="custom_retinue[getUnitKey(i)]" min=0 style='width:50px'>
+                  </td>
                 </tr>
                 <tr>
                   <td>Amount</td>
-                  <td colspan='2'> <input type="number" value='0' v-model="custom_retinue_amount" min=0 style='width:100px'> </td>
+                  <td colspan='2'> <input type="number" value='0' v-model="custom_retinue_amount" min=0
+                      style='width:100px'> </td>
                 </tr>
               </table>
 
             </div>
-            
-            
+
+
 
           </div>
 
@@ -3049,25 +3061,25 @@ var field = new Vue({
           <div class='row'>
             <h3>Hordes</h3>
             <table class='table'>
-                <tr>
-                  <th style='width:10%'>Name</th>
-                  <th v-for="horde in hordes">{{horde.name}}</th>
-                </tr>
-                <tr>
-                  <th>Units</th>
-                  <td v-for="horde in hordes">
-                    <div v-for="(amount, unit) in horde.composition">
-                      <img :src="IMGMAP[unit]"> {{unit}} {{amount}}
-                    </div>
-                  </td>
-                </tr>
-                <tr>
-                  <th>Amount</th>
-                  <td v-for="horde in hordes" style='width:10%'>
-                    <input type="number" value='0' v-model="num_hordes[horde.name]" min=0 style='width:70px'>
+              <tr>
+                <th style='width:10%'>Name</th>
+                <th v-for="horde in hordes">{{horde.name}}</th>
+              </tr>
+              <tr>
+                <th>Units</th>
+                <td v-for="horde in hordes">
+                  <div v-for="(amount, unit) in horde.composition">
+                    <img :src="IMGMAP[unit]"> {{unit}} {{amount}}
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <th>Amount</th>
+                <td v-for="horde in hordes" style='width:10%'>
+                  <input type="number" value='0' v-model="num_hordes[horde.name]" min=0 style='width:70px'>
 
-                  </td>
-                </tr>
+                </td>
+              </tr>
 
 
 
@@ -3097,22 +3109,23 @@ var field = new Vue({
             </table>
           </div>
 
-          
+
           <div>
             <h3>Battle Phase Info</h3>
             <table>
               <tr>
                 <td v-for="ph in phases" style='width:150px'>
                   <label>
-                  <input type="radio" name="phase" v-bind:id="ph" v-bind:value="ph" v-model="phase"/> <img :src="IMGMAP[ph]"/> {{ph}}
-                </label>
+                    <input type="radio" name="phase" v-bind:id="ph" v-bind:value="ph" v-model="phase" /> <img
+                      :src="IMGMAP[ph]" /> {{ph}}
+                  </label>
                 </td>
               </tr>
               <tr v-if="phase=='Skirmish'">
                 <td v-for='d in DAYS'>
                   <label>
-                  <input type="radio" name="days" v-bind:id="d+'days'" v-bind:value="d" v-model="days" /> {{d}} days
-                </label>
+                    <input type="radio" name="days" v-bind:id="d+'days'" v-bind:value="d" v-model="days" /> {{d}} days
+                  </label>
                 </td>
               </tr>
             </table>
@@ -3127,15 +3140,17 @@ var field = new Vue({
               <tr class='row'>
                 <td v-for="cgroup in cgroups" class='col'>
                   <label>
-                  <input type="radio" name="cultures" v-bind:id="cgroup" v-bind:value="cgroup" v-model="general.culture_input"  /> {{cgroup}}
-                </label>
+                    <input type="radio" name="cultures" v-bind:id="cgroup" v-bind:value="cgroup"
+                      v-model="general.culture_input" /> {{cgroup}}
+                  </label>
                 </td>
               </tr>
               <tr class='row'>
                 <td v-for="culture in cultures" class='col'>
                   <label>
-                  <input type="radio" name="cultures" v-bind:id="culture" v-bind:value="culture" v-model="general.culture_input" /> {{culture}}
-                </label>
+                    <input type="radio" name="cultures" v-bind:id="culture" v-bind:value="culture"
+                      v-model="general.culture_input" /> {{culture}}
+                  </label>
                 </td>
               </tr>
             </table>
@@ -3151,34 +3166,33 @@ var field = new Vue({
               <tr v-for="(n, i) in maxGeneralTraits" class='row'>
                 <td v-if="Object.keys(combat_traits).length>i" class='col'>
                   <label>
-                  <input type="checkbox" v-bind:id="'trait_'+Object.keys(combat_traits)[i]" v-model="combat_traits[Object.keys(combat_traits)[i]]"/> 
-                  <img :src="IMGMAP[Object.keys(combat_traits)[i]]">
-                  {{Object.keys(combat_traits)[i]}}
-                </label>
+                    <input type="checkbox" v-bind:id="'trait_'+Object.keys(combat_traits)[i]"
+                      v-model="combat_traits[Object.keys(combat_traits)[i]]" />
+                    <img :src="IMGMAP[Object.keys(combat_traits)[i]]">
+                    {{Object.keys(combat_traits)[i]}}
+                  </label>
                 </td>
-                <td v-else/>
+                <td v-else />
 
                 <td v-if="Object.keys(life_traits).length>i" class='col'>
                   <label>
-                  <input type="checkbox" 
-                  v-bind:id="'trait_'+Object.keys(life_traits)[i]"
-                  v-model="life_traits[Object.keys(life_traits)[i]]" /> 
-                  <img :src="IMGMAP[Object.keys(life_traits)[i]]">
-                  {{Object.keys(life_traits)[i]}}
-                </label>
+                    <input type="checkbox" v-bind:id="'trait_'+Object.keys(life_traits)[i]"
+                      v-model="life_traits[Object.keys(life_traits)[i]]" />
+                    <img :src="IMGMAP[Object.keys(life_traits)[i]]">
+                    {{Object.keys(life_traits)[i]}}
+                  </label>
                 </td>
-                <td v-else/>
+                <td v-else />
 
                 <td v-if="Object.keys(bad_traits).length>i" class='col'>
                   <label>
-                  <input type="checkbox"
-                  v-bind:id="'trait_'+Object.keys(bad_traits)[i]"
-                  v-model="bad_traits[Object.keys(bad_traits)[i]]" /> 
-                  <img :src="IMGMAP[Object.keys(bad_traits)[i]]">
-                  {{Object.keys(bad_traits)[i]}}
-                </label>
+                    <input type="checkbox" v-bind:id="'trait_'+Object.keys(bad_traits)[i]"
+                      v-model="bad_traits[Object.keys(bad_traits)[i]]" />
+                    <img :src="IMGMAP[Object.keys(bad_traits)[i]]">
+                    {{Object.keys(bad_traits)[i]}}
+                  </label>
                 </td>
-                <td v-else/>
+                <td v-else />
 
 
               </tr>
@@ -3190,9 +3204,9 @@ var field = new Vue({
               <tr class='row'>
                 <td v-for="(flag, terr) in terrain" class='col'>
                   <label>
-                <input type="checkbox" v-bind:id="'flag_terrain_'+terr" v-model="terrain[terr]" />
-                {{terr}}
-                </label>
+                    <input type="checkbox" v-bind:id="'flag_terrain_'+terr" v-model="terrain[terr]" />
+                    {{terr}}
+                  </label>
                 </td>
               </tr>
             </table>
@@ -3238,15 +3252,14 @@ var field = new Vue({
       <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
 
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
-      <script src="https://unpkg.com/vue/dist/vue.js"></script>
   </body>
 
-</html>
+  </html>
 
-  
+
   <script>
     // tell the embed parent frame the height of the content
-    if (window.parent && window.parent.parent){
+    if (window.parent && window.parent.parent) {
       window.parent.parent.postMessage(["resultsFrame", {
         height: document.body.getBoundingClientRect().height,
         slug: "mj6ch09k"
@@ -3254,4 +3267,5 @@ var field = new Vue({
     }
   </script>
 </body>
+
 </html>
